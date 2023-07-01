@@ -1,2 +1,14 @@
-# tasktracker
-It is a simple to-do-app
+# TaskTracker
+Started on 1. July 2023
+by Richard Liu
+
+## Description 
+It is a simple to do web application 
+
+## Getting Started
+Follow the instructions below to get started with the TodoApp on your local machine.
+
+### Clone the repository:
+```
+git clone https://github.com/RL08/TaskTrackert.git
+```
