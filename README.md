@@ -1,5 +1,5 @@
 # TaskTracker
-Started on 1. July 2023
+Started on 1. July 2023 <br>
 by Richard Liu
 
 ## Description 
