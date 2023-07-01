@@ -10,5 +10,5 @@ Follow the instructions below to get started with the TodoApp on your local mach
 
 ### Clone the repository:
 ```
-git clone https://github.com/RL08/TaskTrackert.git
+git clone https://github.com/RL08/TaskTracker.git
 ```
