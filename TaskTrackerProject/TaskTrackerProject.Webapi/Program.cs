@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Threading.Tasks;
+using TaskTrackerProject.Application.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 // JWT Authentication ******************************************************************************
@@ -23,27 +23,13 @@ builder.Services
             ValidateAudience = false,
             ValidateIssuer = false
         };
-        // See https://learn.microsoft.com/en-us/aspnet/core/signalr/authn-and-authz?view=aspnetcore-6.0#built-in-jwt-authentication
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                // Extract Token from WS Request /chessHub?token=......
-                var accessToken = context.Request.Query["access_token"];
-                if (string.IsNullOrEmpty(accessToken)) { return Task.CompletedTask; }
-                var path = context.HttpContext.Request.Path;
-                if (context.HttpContext.Request.Path.StartsWithSegments("/chatHub"))
-                    context.Token = accessToken;
-                return Task.CompletedTask;
-            }
-        };
     });
 // *************************************************************************************************
 
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
-builder.Services.AddAutoMapper(typeof(TaskTrackerProject.Application.Dto.MappingProfile));
-builder.Services.AddDbContext<ChatifyContext>(opt =>
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddDbContext<TaskTrackerContext>(opt =>
 {
     opt.UseSqlServer(
         builder.Configuration.GetConnectionString("Default"),
@@ -59,7 +45,7 @@ if (builder.Environment.IsDevelopment())
             builder =>
             {
                 builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
-                .WithOrigins("http://127.0.0.1:5173", "https://127.0.0.1:5173", "http://localhost:5173");
+                .WithOrigins("http://127.0.0.1:5173", "https://127.0.0.1:5173", "http://localhost:5173", "https://localhost:5173");
             });
     });
 }
@@ -69,7 +55,7 @@ if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
     {
-        using (var db = scope.ServiceProvider.GetRequiredService<ChatifyContext>())
+        using (var db = scope.ServiceProvider.GetRequiredService<TaskTrackerContext>())
         {
             db.CreateDatabase(isDevelopment: app.Environment.IsDevelopment());
         }
