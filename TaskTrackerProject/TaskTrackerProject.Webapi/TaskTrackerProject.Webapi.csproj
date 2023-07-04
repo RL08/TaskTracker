@@ -14,4 +14,8 @@
     <ProjectReference Include="..\TaskTrackerProject.Application\TaskTrackerProject.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

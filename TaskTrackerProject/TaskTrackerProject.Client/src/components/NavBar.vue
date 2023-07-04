@@ -1,0 +1,96 @@
+<script setup>
+import ProfileAvatar from "vue-profile-avatar"
+</script>
+
+<template>
+<div class="wrapper">
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <div class="profile">
+        <ProfileAvatar id="profile" :username="username" size=m></ProfileAvatar> 
+        <div id="profile-name">{{ username }}</div> 
+      </div>
+      <form class="form-inline">
+        <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+      </form>
+      <ul class="list-unstyled components">
+        <li>
+          <!-- 22 char max -->
+          <router-link to="/" class="nav-link"> 
+            <font-awesome-icon id="icon" icon="fa-list"/> All List
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/newlist" class="nav-link">
+            <font-awesome-icon id="icon" icon="fa-plus"/> New List
+          </router-link>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</div>
+</template>
+
+<script>
+export default {
+  computed: {
+    authenticated() {
+      return this.$store.state.user.isLoggedIn;
+    }
+  },
+  data() {
+    return {
+      username: "Dummy",
+    };
+  }, 
+  components: {
+    ProfileAvatar,
+  },  
+}
+</script>
+
+<style scoped>
+.wrapper {
+  display: flex;
+}
+#sidebar {
+  width: 30vh;
+  height: 100vh;
+  background-color: white;
+}
+.list-unstyled {
+  padding-left: 0;
+}
+#icon {
+  margin-right: 20px;
+}
+.nav-link {
+  padding: 10px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+.nav-link:hover {
+  background-color: lightgrey;
+}
+.navbar-brand:hover {
+  background-color: lightgrey; 
+}
+.form-inline {
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.profile {
+  display: flex;
+  justify-content: left; 
+  padding: 10px;
+}
+#profile-name {
+  padding-left: 10px;
+  font-size: medium;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

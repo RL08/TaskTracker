@@ -83,8 +83,7 @@ namespace TaskTrackerProject.Application.Infrastructure
                     username: username.ToLower(),
                     password: "111",
                     email: $"{username.ToLower()}@spengergasse.at",       
-                    role: Userrole.Admin)
-                    
+                    role: Userrole.Admin)   
                 { Guid = f.Random.Guid() };
             })
             .Generate(10)
