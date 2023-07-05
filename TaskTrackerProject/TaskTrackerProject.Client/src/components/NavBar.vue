@@ -5,27 +5,37 @@ import ProfileAvatar from "vue-profile-avatar"
 <template>
 <div class="wrapper">
   <nav id="sidebar" :class="{ 'active': showSidebar }">
-    <button class="navbar-toggler" type="button" @click="toggleSidebar()">
+    <button class="navbar-toggler" @click="toggleSidebar()">
       <font-awesome-icon id="bar" icon="fa-bars"/>
     </button>
     <div class="sidebar-header" :class="{ 'active': showSidebar }">
-      <div class="profile">
-        <ProfileAvatar id="profile" :username="username" size=m></ProfileAvatar> 
-        <div id="profile-name">{{ username }}</div> 
-      </div>
-      <form class="form-inline">
-        <input class="form-control" type="search" placeholder="Search" aria-label="Search">
-      </form>
+      <div class="authentication-container" v-if="!authenticated">
+        <router-link to="/login" class="nav-link" >
+          <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign in
+        </router-link>
+        <router-link to="/login" class="nav-link">
+          <font-awesome-icon class="icon" icon="fa-arrow-right"/> Sign up
+        </router-link>
+      </div> 
+      <div class="profile-info">
+        <div class="profile" v-if="authenticated">
+          <ProfileAvatar id="profile" :username="username" size=m></ProfileAvatar> 
+          <div id="profile-name">{{ username }}</div> 
+        </div>
+        <form class="form-inline">
+          <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+        </form>
+        </div>
       <ul class="list-unstyled components">
         <li>
           <!-- 14 char max -->
           <router-link to="/" class="nav-link"> 
-            <font-awesome-icon id="icon" icon="fa-list"/> All List
+            <font-awesome-icon class="icon" icon="fa-list"/> All List
           </router-link>
         </li>
         <li>
           <router-link to="/newlist" class="nav-link">
-            <font-awesome-icon id="icon" icon="fa-plus"/> New List
+            <font-awesome-icon class="icon" icon="fa-plus"/> New List
           </router-link>
         </li>
       </ul>
@@ -70,7 +80,7 @@ export default {
 .list-unstyled {
   padding-left: 0;
 }
-#icon {
+.icon {
   margin-right: 20px;
 }
 .nav-link {
@@ -78,6 +88,7 @@ export default {
   display: flex;
   justify-content: left;
   align-items: center;
+  width: 100%;
 }
 .nav-link:hover, .navbar-brand:hover, #bar:hover {
   background-color: lightgrey;
@@ -97,6 +108,11 @@ export default {
   font-weight: bold;
   display: flex;
   justify-content: center;
+  align-items: center;
+}
+.authentication-container {
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 /** responsive */
@@ -120,10 +136,27 @@ export default {
     background-color: transparent;
   }
 }
+@media screen and (max-height: 660px) {
+  .navbar-toggler {
+    display: flex;
+  }
+  #bar {
+    border: 2px solid black;
+    border-radius: 50%;
+    padding: 10px;
+  }
+  .sidebar-header {
+    display: none;
+  }
+  #sidebar {
+    background-color: transparent;
+  }
+}
 .sidebar-header.active {
   display: block;
 }
 #sidebar.active {
   background-color: white;
+  width: 150px;
 }
 </style>
