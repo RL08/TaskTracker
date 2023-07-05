@@ -4,8 +4,11 @@ import ProfileAvatar from "vue-profile-avatar"
 
 <template>
 <div class="wrapper">
-  <nav id="sidebar">
-    <div class="sidebar-header">
+  <nav id="sidebar" :class="{ 'active': showSidebar }">
+    <button class="navbar-toggler" type="button" @click="toggleSidebar()">
+      <font-awesome-icon id="bar" icon="fa-bars"/>
+    </button>
+    <div class="sidebar-header" :class="{ 'active': showSidebar }">
       <div class="profile">
         <ProfileAvatar id="profile" :username="username" size=m></ProfileAvatar> 
         <div id="profile-name">{{ username }}</div> 
@@ -15,7 +18,7 @@ import ProfileAvatar from "vue-profile-avatar"
       </form>
       <ul class="list-unstyled components">
         <li>
-          <!-- 22 char max -->
+          <!-- 14 char max -->
           <router-link to="/" class="nav-link"> 
             <font-awesome-icon id="icon" icon="fa-list"/> All List
           </router-link>
@@ -41,11 +44,17 @@ export default {
   data() {
     return {
       username: "Dummy",
+      showSidebar: false,
     };
   }, 
   components: {
     ProfileAvatar,
   },  
+  methods: {
+    toggleSidebar() {
+      this.showSidebar = !this.showSidebar; 
+    },
+  },
 }
 </script>
 
@@ -70,11 +79,8 @@ export default {
   justify-content: left;
   align-items: center;
 }
-.nav-link:hover {
+.nav-link:hover, .navbar-brand:hover, #bar:hover {
   background-color: lightgrey;
-}
-.navbar-brand:hover {
-  background-color: lightgrey; 
 }
 .form-inline {
   padding: 10px;
@@ -92,5 +98,32 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+/** responsive */
+.navbar-toggler {
+  display: none;
+  padding: 12px 0 0 12px;
+}
+@media screen and (max-width: 912px) {
+  .navbar-toggler {
+    display: flex;
+  }
+  #bar {
+    border: 2px solid black;
+    border-radius: 50%;
+    padding: 10px;
+  }
+  .sidebar-header {
+    display: none;
+  }
+  #sidebar {
+    background-color: transparent;
+  }
+}
+.sidebar-header.active {
+  display: block;
+}
+#sidebar.active {
+  background-color: white;
 }
 </style>
