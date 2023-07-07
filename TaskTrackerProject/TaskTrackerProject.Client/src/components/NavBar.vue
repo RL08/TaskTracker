@@ -10,10 +10,10 @@ import ProfileAvatar from "vue-profile-avatar"
     </button>
     <div class="sidebar-header" :class="{ 'active': showSidebar }">
       <div class="authentication-container" v-if="!authenticated">
-        <router-link to="/login" class="nav-link" >
+        <router-link to="/signin" class="nav-link" >
           <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign in
         </router-link>
-        <router-link to="/login" class="nav-link">
+        <router-link to="/signup" class="nav-link">
           <font-awesome-icon class="icon" icon="fa-arrow-right"/> Sign up
         </router-link>
       </div> 
@@ -26,7 +26,7 @@ import ProfileAvatar from "vue-profile-avatar"
           <input class="form-control" type="search" placeholder="Search" aria-label="Search">
         </form>
         </div>
-      <ul class="list-unstyled components">
+      <ul class="list-unstyled">
         <li>
           <!-- 14 char max -->
           <router-link to="/" class="nav-link"> 
@@ -73,9 +73,10 @@ export default {
   display: flex;
 }
 #sidebar {
-  width: 30vh;
+  width: 150px;
   height: 100vh;
   background-color: white;
+  overflow-y: auto
 }
 .list-unstyled {
   padding-left: 0;
@@ -136,27 +137,10 @@ export default {
     background-color: transparent;
   }
 }
-@media screen and (max-height: 660px) {
-  .navbar-toggler {
-    display: flex;
-  }
-  #bar {
-    border: 2px solid black;
-    border-radius: 50%;
-    padding: 10px;
-  }
-  .sidebar-header {
-    display: none;
-  }
-  #sidebar {
-    background-color: transparent;
-  }
-}
 .sidebar-header.active {
   display: block;
 }
 #sidebar.active {
   background-color: white;
-  width: 150px;
 }
 </style>
