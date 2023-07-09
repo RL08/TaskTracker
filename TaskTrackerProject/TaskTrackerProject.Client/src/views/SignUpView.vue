@@ -21,15 +21,7 @@ import Navbar from "../components/NavBar.vue"
     <div class="tab-content">
       <div id="signup">
         <h1>Login</h1>
-        <form action="/" method="post">
-          <div class="top-row">
-            <div class="field-wrap">
-              <input type="text" required placeholder="First Name" />
-            </div>
-            <div class="field-wrap">
-              <input type="text" required placeholder="Last Name" />
-            </div>
-          </div>
+        <form>
           <div class="field-wrap">
             <input type="email" required placeholder="Email Address"/>
           </div>
@@ -37,18 +29,6 @@ import Navbar from "../components/NavBar.vue"
             <input type="password" required placeholder="Password" />
           </div>
           <button type="submit" class="button">Sign Up</button>
-        </form>
-      </div>
-      <div id="login">
-        <h1>Welcome Back!</h1>
-        <form action="/" method="post">
-          <div class="field-wrap">
-            <input type="email" required placeholder="Email" />
-          </div>
-          <div class="field-wrap">
-            <input type="password" required placeholder="Password" />
-          </div>
-          <button class="button" >Login</button>
         </form>
       </div>
     </div>
@@ -71,6 +51,8 @@ import Navbar from "../components/NavBar.vue"
 	border-radius: 15px;
 	box-shadow: 0 4px 10px 4px rgba(19, 35, 47, .3);
 	font-size: 17px;
+  width: 500px;
+  height: 600px;
 }
 .tab-group {
 	list-style: none;
@@ -99,9 +81,6 @@ import Navbar from "../components/NavBar.vue"
 .tab-group .active a {
 	background: #01939c;
 	color: #fff;
-}
-.tab-content > div:last-child {
-  display: none;
 }
 h1 {
 	text-align: center;

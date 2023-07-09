@@ -52,7 +52,7 @@ docker run -d -p 11433:1433 --network=sqlserver_network --ip=10.0.38.3 --name $S
 # Build and run app container.
 cd "$CWD"
 docker build -t $DOCKER_IMAGE . 
-MSYS_NO_PATHCONV=1 docker run -d -p 5000:80 -p 5001:443 --name $DOCKER_IMAGE \
+MSYS_NO_PATHCONV=1 docker run -d -p 5000:80 --name $DOCKER_IMAGE \
     --network=sqlserver_network --ip=10.0.38.2 \
     -e "ASPNETCORE_URLS=https://+;http://+" \
     -e "ASPNETCORE_HTTPS_PORT=5001" \

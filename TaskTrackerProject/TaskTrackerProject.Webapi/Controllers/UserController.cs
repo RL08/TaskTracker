@@ -8,6 +8,10 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using TaskTrackerProject.Application.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using TaskTrackerProject.Application.Dto;
+using TaskTrackerProject.Application.Model;
+using System.Net;
 
 namespace TaskTrackerProject.Webapi.Controllers
 {
@@ -16,7 +20,7 @@ namespace TaskTrackerProject.Webapi.Controllers
     [AllowAnonymous]
     public class UserController : ControllerBase
     {
-        public record CredentialsDto(string username, string password);
+        public record CredentialsDto(string username, string password, string email);
 
         private readonly IConfiguration _config;
         private readonly bool _isDevelopment;
@@ -79,6 +83,30 @@ namespace TaskTrackerProject.Webapi.Controllers
                 Group = group,
                 Token = tokenHandler.WriteToken(token)
             });
+        }
+
+        /// <summary>
+        /// POST /api/user/register
+        /// </summary>
+        /// <param name="credentials"></param>
+        /// <returns></returns>
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] CredentialsDto credentials)
+        {
+            var user = _db.Users.FirstOrDefault(a => a.Username == credentials.username);
+            if (user is null)
+            {
+                user = new User(credentials.username, credentials.password, credentials.email, Userrole.User);
+                _db.Users.Add(user);
+                try { _db.SaveChanges(); }
+                catch (DbUpdateException) { return BadRequest(); }
+            }
+            else
+            {
+                return Ok("User is in database");
+            }
+            if (!user.CheckPassword(credentials.password)) { return Unauthorized(); }
+            return Ok(user);
         }
 
         /// <summary>

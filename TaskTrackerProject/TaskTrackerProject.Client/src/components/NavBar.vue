@@ -1,5 +1,6 @@
 <script setup>
-import ProfileAvatar from "vue-profile-avatar"
+import ProfileAvatar from "vue-profile-avatar";
+import axios from "axios";
 </script>
 
 <template>
@@ -25,7 +26,7 @@ import ProfileAvatar from "vue-profile-avatar"
         <form class="form-inline">
           <input class="form-control" type="search" placeholder="Search" aria-label="Search">
         </form>
-        </div>
+      </div>
       <ul class="list-unstyled">
         <li>
           <!-- 14 char max -->
@@ -38,6 +39,11 @@ import ProfileAvatar from "vue-profile-avatar"
             <font-awesome-icon class="icon" icon="fa-plus"/> New List
           </router-link>
         </li>
+        <li>
+          <div class="nav-link" id="logout" @click="logout()">
+            <font-awesome-icon class="icon" icon="fa-right-from-bracket"/> Logout
+          </div>
+        </li>
       </ul>
     </div>
   </nav>
@@ -49,11 +55,18 @@ export default {
   computed: {
     authenticated() {
       return this.$store.state.user.isLoggedIn;
-    }
+    },
+    username: {
+      get() {
+        return this.$store.state.user.name;
+      }
+    },
   },
   data() {
     return {
-      username: "Dummy",
+      loginModel: {
+        username: "",
+      },    
       showSidebar: false,
     };
   }, 
@@ -63,6 +76,10 @@ export default {
   methods: {
     toggleSidebar() {
       this.showSidebar = !this.showSidebar; 
+    },
+    logout() {
+      delete axios.defaults.headers.common['Authorization'];
+      this.$store.commit('authenticate', null);
     },
   },
 }
@@ -115,6 +132,9 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+#logout {
+  cursor: pointer;
 }
 /** responsive */
 .navbar-toggler {

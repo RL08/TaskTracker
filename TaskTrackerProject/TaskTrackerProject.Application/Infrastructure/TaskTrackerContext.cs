@@ -48,9 +48,9 @@ namespace TaskTrackerProject.Application.Infrastructure
         /// Initialize the database with some values 
         /// enviroment is production.
         /// </summary>
-        private async void Initialize()
+        private void Initialize()
         {
-            var users = new User[]
+            var users = new[]
             {
                 new User(
                     username: "Ruffy",
@@ -63,15 +63,15 @@ namespace TaskTrackerProject.Application.Infrastructure
                     email: "zoro@spengergasse.at",
                     role: Userrole.User),
             };
-            await Users.AddRangeAsync(users);
-            await SaveChangesAsync();
+            Users.AddRange(users);
+            SaveChanges();
         }
 
         /// <summary>
         /// Generates random values for testing the application. 
         /// enviroment is development.
         /// </summary>    
-        private async void Seed()
+        private void Seed()
         {
             Randomizer.Seed = new Random(1039);
             var faker = new Faker("en");
@@ -82,28 +82,35 @@ namespace TaskTrackerProject.Application.Infrastructure
                 return new User(
                     username: username.ToLower(),
                     password: "111",
-                    email: $"{username.ToLower()}@spengergasse.at",       
-                    role: Userrole.Admin)   
+                    email: $"{username.ToLower()}@spengergasse.at",
+                    role: Userrole.Admin)
                 { Guid = f.Random.Guid() };
             })
             .Generate(10)
             .GroupBy(a => a.Email).Select(g => g.First())
             .ToList();
-            await Users.AddRangeAsync(users);
-            await SaveChangesAsync();
+            Users.AddRange(users);
+            SaveChanges(); 
         }
+
         /// <summary>
         /// Creates the database. 
         /// Called once at application startup in Program.cs.
         /// </summary>    
         public void CreateDatabase(bool isDevelopment)
         {
-            if (isDevelopment) { Database.EnsureDeleted(); }
-            // EnsureCreated only creates the model if the database does not exist or it has no
-            // tables. Returns true if the schema was created.  Returns false if there are
-            // existing tables in the database. This avoids initializing multiple times.
-            if (Database.EnsureCreated()) { Initialize(); }
-            if (isDevelopment) Seed();
+            try
+            {
+                if (isDevelopment) { Database.EnsureDeleted(); }
+                // EnsureCreated only creates the model if the database does not exist or it has no
+                // tables. Returns true if the schema was created.  Returns false if there are
+                // existing tables in the database. This avoids initializing multiple times.
+                if (Database.EnsureCreated()) { Initialize(); }
+                if (isDevelopment) Seed();
+            }
+            catch (Exception) {
+                Console.WriteLine("Docker Container not on !!!");
+            }
         }
     }
 }

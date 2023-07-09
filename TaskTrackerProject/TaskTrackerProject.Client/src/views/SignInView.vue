@@ -1,11 +1,12 @@
 <script setup>
+import axios from 'axios';
 import Navbar from "../components/NavBar.vue"
 </script>
 
 <template>
 <div class="wrapper">
 <Navbar/>
-  <div class="form">
+  <div class="form" v-if="!authenticated">
     <ul class="tab-group">
       <li class="tab active">
 				<router-link to="/signin" class="tab-link">
@@ -21,43 +22,82 @@ import Navbar from "../components/NavBar.vue"
     <div class="tab-content">
       <div id="signup">
         <h1>Register</h1>
-        <form action="/" method="post">
-          <div class="top-row">
-            <div class="field-wrap">
-              <input type="text" required placeholder="First Name" />
-            </div>
-            <div class="field-wrap">
-              <input type="text" required placeholder="Last Name" />
+        <form @submit.prevent="register">
+          <div class="form-group">
+            <div class="form-group">
+              <input type="text" required placeholder="Username" v-model="loginModel.username"/>
             </div>
           </div>
-          <div class="field-wrap">
-            <input type="email" required placeholder="Email Address"/>
+          <div class="form-group">
+            <input type="email" required placeholder="Email Address" v-model="loginModel.email"/>
           </div>
-          <div class="field-wrap">
-            <input type="password" required placeholder="Password" />
+          <div class="form-group">
+            <input type="password" required placeholder="Password" v-model="loginModel.password"/>
           </div>
           <button type="submit" class="button">Sign Up</button>
         </form>
       </div>
-      <div id="login">
-        <h1>Welcome Back!</h1>
-        <form action="/" method="post">
-          <div class="field-wrap">
-            <input type="email" required placeholder="Email" />
-          </div>
-          <div class="field-wrap">
-            <input type="password" required placeholder="Password" />
-          </div>
-          <button class="button" >Login</button>
-        </form>
-      </div>
     </div>
   </div> 
+  <div class="form" v-else>
+    <font-awesome-icon class="check" icon="fa-check"/> Successful
+  </div>
 </div>
 </template>
 
 <script>
+export default {
+  data() {
+    return {
+      loginModel: {
+        username: "",
+        email: "",
+        password: "", 
+      }
+    };
+  },
+  methods: {
+    async register() {
+      const host =
+        process.env.NODE_ENV == "production"
+          ? ""
+          : "https://localhost:5001";  
 
+      const data = {
+        username: this.loginModel.username,
+        email: this.loginModel.email,
+        password: this.loginModel.password
+      }   
+      console.log(data);  
+
+      try {
+        const userdata = (await axios.post(host + 'user/register', this.loginModel)).data;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
+        this.$store.commit('authenticate', userdata);     
+        this.$router.push("/");
+        console.log("success");
+      } catch (e) {
+        if (e.response.status == 401) {
+            alert('Login failed. Invalid credentials.');
+        }
+      }
+    },
+    logout() {
+      delete axios.defaults.headers.common['Authorization'];
+      this.$store.commit('authenticate', null);
+    },
+  },
+  computed: {
+    authenticated() {
+      return this.$store.state.user.isLoggedIn ? true : false;     
+    },
+    name() {
+      console.log(this.$store.state.user.username);
+      console.log(this.$store.state.user.isLoggedIn);
+      return this.$store.state.user.username;
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -71,6 +111,8 @@ import Navbar from "../components/NavBar.vue"
 	border-radius: 15px;
 	box-shadow: 0 4px 10px 4px rgba(19, 35, 47, .3);
 	font-size: 17px;
+  width: 500px;
+  height: 600px;
 }
 .tab-group {
 	list-style: none;
@@ -100,9 +142,6 @@ import Navbar from "../components/NavBar.vue"
 	background: #01939c;
 	color: #fff;
 }
-.tab-content > div:last-child {
-  display: none;
-}
 h1 {
 	text-align: center;
 	margin-bottom: 40px;
@@ -115,16 +154,8 @@ input, textarea {
 	color: black;
 	border-radius: 6px;
 }
-.field-wrap {
+.form-group {
 	margin-bottom: 40px;
-}
-.top-row > div {
-	float: left;
-	width: 48%;
-	margin-right: 4%;
-}
-.top-row > div:last-child {
-	margin: 0;
 }
 .button {
 	border: 0;
@@ -134,5 +165,9 @@ input, textarea {
 	background: #01939c;
 	color: #fff;
 	width: 100%;
+}
+#check {
+  width: 100%;
+  background-color: greenyellow;
 }
 </style>
