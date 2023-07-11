@@ -101,10 +101,7 @@ namespace TaskTrackerProject.Webapi.Controllers
                 try { _db.SaveChanges(); }
                 catch (DbUpdateException) { return BadRequest(); }
             }
-            else
-            {
-                return Ok("User is in database");
-            }
+            else { return Ok("User is in database"); }
             if (!user.CheckPassword(credentials.password)) { return Unauthorized(); }
             return Ok(user);
         }

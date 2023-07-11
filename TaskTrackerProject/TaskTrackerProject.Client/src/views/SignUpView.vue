@@ -1,4 +1,5 @@
 <script setup>
+import axios from 'axios';
 import Navbar from "../components/NavBar.vue"
 </script>
 
@@ -21,12 +22,15 @@ import Navbar from "../components/NavBar.vue"
     <div class="tab-content">
       <div id="signup">
         <h1>Login</h1>
-        <form>
-          <div class="field-wrap">
-            <input type="email" required placeholder="Email Address"/>
+        <form @submit.prevent="login">
+          <div class="form-group">
+            <input type="text" required placeholder="Username" v-model="loginModel.username"/>
           </div>
-          <div class="field-wrap">
-            <input type="password" required placeholder="Password" />
+					<div class="form-group">
+            <input type="email" required placeholder="Email Address" v-model="loginModel.email"/>
+          </div>
+          <div class="form-group">
+            <input type="password" required placeholder="Password" v-model="loginModel.password"/>
           </div>
           <button type="submit" class="button">Sign Up</button>
         </form>
@@ -37,7 +41,43 @@ import Navbar from "../components/NavBar.vue"
 </template>
 
 <script>
+export default {
+	data() {
+		return {
+			loginModel: {
+				username: "",
+				email: "",
+				password: "",
+			}
+		}
+	},
+	methods: {
+		async login() {
+			const data = {
+        username: this.loginModel.username,
+				email: this.loginModel.email,
+        password: this.loginModel.password
+      } 
+			console.log(data);
 
+			try {
+				const userdata = (await axios.post('user/login', this.loginModel)).data;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
+        this.$store.commit('authenticate', userdata);     
+        this.$router.push("/");
+        console.log("success");
+			} catch (e) {
+        if(e.response === undefined)
+        {
+          console.error(e);
+        }
+        else if (e.response.status == 401) {
+          alert('Login failed. Invalid credentials.');
+        }
+      }
+		}
+	}
+}
 </script>
 
 <style scoped>
@@ -94,7 +134,7 @@ input, textarea {
 	color: black;
 	border-radius: 6px;
 }
-.field-wrap {
+.form-group {
 	margin-bottom: 40px;
 }
 .top-row > div {

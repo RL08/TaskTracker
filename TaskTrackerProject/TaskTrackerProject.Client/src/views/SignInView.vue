@@ -24,9 +24,7 @@ import Navbar from "../components/NavBar.vue"
         <h1>Register</h1>
         <form @submit.prevent="register">
           <div class="form-group">
-            <div class="form-group">
-              <input type="text" required placeholder="Username" v-model="loginModel.username"/>
-            </div>
+            <input type="text" required placeholder="Username" v-model="loginModel.username"/>
           </div>
           <div class="form-group">
             <input type="email" required placeholder="Email Address" v-model="loginModel.email"/>
@@ -58,11 +56,10 @@ export default {
   },
   methods: {
     async register() {
-      const host =
-        process.env.NODE_ENV == "production"
-          ? ""
-          : "https://localhost:5001";  
-
+      // const host =
+      //   process.env.NODE_ENV == "production"
+      //     ? ""
+      //     : "http://localhost:5173";  
       const data = {
         username: this.loginModel.username,
         email: this.loginModel.email,
@@ -71,30 +68,25 @@ export default {
       console.log(data);  
 
       try {
-        const userdata = (await axios.post(host + 'user/register', this.loginModel)).data;
+        const userdata = (await axios.post('user/register', this.loginModel)).data;
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
         this.$store.commit('authenticate', userdata);     
         this.$router.push("/");
         console.log("success");
       } catch (e) {
-        if (e.response.status == 401) {
-            alert('Login failed. Invalid credentials.');
+        if(e.response === undefined)
+        {
+          console.error(e);
+        }
+        else if (e.response.status == 401) {
+          alert('Login failed. Invalid credentials.');
         }
       }
-    },
-    logout() {
-      delete axios.defaults.headers.common['Authorization'];
-      this.$store.commit('authenticate', null);
     },
   },
   computed: {
     authenticated() {
       return this.$store.state.user.isLoggedIn ? true : false;     
-    },
-    name() {
-      console.log(this.$store.state.user.username);
-      console.log(this.$store.state.user.isLoggedIn);
-      return this.$store.state.user.username;
     },
   },
 };
