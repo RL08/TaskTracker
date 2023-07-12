@@ -6,7 +6,7 @@ import Navbar from "../components/NavBar.vue"
 <template>
 <div class="wrapper">
 <Navbar/>
-  <div class="form">
+  <div class="form" v-if="!authenticated">
     <ul class="tab-group">
       <li class="tab">
 				<router-link to="/signin" class="tab-link">
@@ -19,14 +19,14 @@ import Navbar from "../components/NavBar.vue"
         </router-link>
 			</li>
     </ul>
-    <div class="tab-content">
+    <div class="form-content">
       <div id="signup">
-        <h1>Login</h1>
-        <form @submit.prevent="login">
+        <h1>Register</h1>
+        <form @submit.prevent="register">
           <div class="form-group">
             <input type="text" required placeholder="Username" v-model="loginModel.username"/>
           </div>
-					<div class="form-group">
+          <div class="form-group">
             <input type="email" required placeholder="Email Address" v-model="loginModel.email"/>
           </div>
           <div class="form-group">
@@ -42,42 +42,45 @@ import Navbar from "../components/NavBar.vue"
 
 <script>
 export default {
-	data() {
-		return {
-			loginModel: {
-				username: "",
-				email: "",
-				password: "",
-			}
-		}
-	},
-	methods: {
-		async login() {
-			const data = {
-        username: this.loginModel.username,
-				email: this.loginModel.email,
-        password: this.loginModel.password
-      } 
-			console.log(data);
+  data() {
+    return {
+      loginModel: {
+        username: "",
+        email: "",
+        password: "", 
+      }
+    };
+  },
+  methods: {
+    async register() {
+      // const data = {
+      //   username: this.loginModel.username,
+			// 	email: this.loginModel.email,
+      //   password: this.loginModel.password
+      // } 
+			// console.log(data); 
+      // uncomment to see input data  
 
-			try {
-				const userdata = (await axios.post('user/login', this.loginModel)).data;
+      try {
+        const userdata = (await axios.post('user/register', this.loginModel)).data;
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
         this.$store.commit('authenticate', userdata);     
         this.$router.push("/");
         console.log("success");
-			} catch (e) {
-        if(e.response === undefined)
-        {
-          console.error(e);
-        }
+      } catch (e) {
+        if(e.response === undefined) { console.error(e); }
         else if (e.response.status == 401) {
           alert('Login failed. Invalid credentials.');
         }
       }
-		}
-	}
-}
+    },
+  },
+  computed: {
+    authenticated() {
+      return this.$store.state.user.isLoggedIn ? true : false;     
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -136,14 +139,6 @@ input, textarea {
 }
 .form-group {
 	margin-bottom: 40px;
-}
-.top-row > div {
-	float: left;
-	width: 48%;
-	margin-right: 4%;
-}
-.top-row > div:last-child {
-	margin: 0;
 }
 .button {
 	border: 0;

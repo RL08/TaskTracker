@@ -10,14 +10,9 @@ import Navbar from "../components/NavBar.vue"
     <ul class="tab-group">
       <li class="tab active">
 				<router-link to="/signin" class="tab-link">
-          <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign in
+          <font-awesome-icon class="icon" icon="fa-arrow-left"/> Back
         </router-link>
       </li>
-      <li class="tab">
-				<router-link to="/signup" class="tab-link" >
-          <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign up
-        </router-link>
-			</li>
     </ul>
     <div class="form-content">
       <div id="signup">
@@ -32,11 +27,6 @@ import Navbar from "../components/NavBar.vue"
           <div class="form-group">
             <input type="password" required placeholder="Password" v-model="loginModel.password"/>
           </div>
-					<div class="form-group-icon">
-						<router-link to="/signinms">
-							<font-awesome-icon id="ms" icon="fa-brands fa-microsoft"/>
-						</router-link>
-					</div>
           <button type="submit" class="button">Sign Up</button>
         </form>
       </div>
@@ -67,7 +57,7 @@ export default {
       // uncomment to see input data
 
 			try {
-				const userdata = (await axios.post('user/login', this.loginModel)).data;
+				const userdata = (await axios.post('user/loginms', this.loginModel)).data;
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
         this.$store.commit('authenticate', userdata);     
         this.$router.push("/");
@@ -163,8 +153,5 @@ input, textarea {
 	background: #01939c;
 	color: #fff;
 	width: 100%;
-}
-#ms {
-	color: #01939c;
 }
 </style>

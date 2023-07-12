@@ -70,16 +70,23 @@ namespace TaskTrackerProject.Application.Model
         /// <returns>Base64 encoded hash.</returns>
         private string CalculateHash(string password, string salt)
         {
-            byte[] saltBytes = Convert.FromBase64String(salt);
-            byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
+            if(password is not null)
+            {
+                byte[] saltBytes = Convert.FromBase64String(salt);
+                byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
 
-            System.Security.Cryptography.HMACSHA256 myHash =
-                new System.Security.Cryptography.HMACSHA256(saltBytes);
+                System.Security.Cryptography.HMACSHA256 myHash =
+                    new System.Security.Cryptography.HMACSHA256(saltBytes);
 
-            byte[] hashedData = myHash.ComputeHash(passwordBytes);
+                byte[] hashedData = myHash.ComputeHash(passwordBytes);
 
-            // Das Bytearray wird als Hexstring zurückgegeben.
-            return Convert.ToBase64String(hashedData);
+                // Das Bytearray wird als Hexstring zurückgegeben.
+                return Convert.ToBase64String(hashedData);
+            }
+            else
+            {
+                return PasswordHash;
+            }
         }
     }
 }

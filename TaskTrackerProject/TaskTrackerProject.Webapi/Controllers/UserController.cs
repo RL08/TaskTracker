@@ -34,10 +34,12 @@ namespace TaskTrackerProject.Webapi.Controllers
         }
 
         /// <summary>
-        /// POST /api/user/login
+        /// POST /api/user/loginms
         /// </summary>
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] CredentialsDto credentials)
+        /// <param name="credentials"></param>
+        /// <returns></returns>
+        [HttpPost("loginms")]
+        public IActionResult LoginMS([FromBody] CredentialsDto credentials)
         {
             var lifetime = TimeSpan.FromHours(3);
             var searchuser = _config["Searchuser"];
@@ -86,6 +88,45 @@ namespace TaskTrackerProject.Webapi.Controllers
         }
 
         /// <summary>
+        /// POST /api/user/login
+        /// </summary>
+        /// <param name="credentials"></param>
+        /// <returns></returns>
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] CredentialsDto credentials)
+        {
+            var secret = Convert.FromBase64String(_config["Secret"]);
+            var lifetime = TimeSpan.FromHours(3);
+
+            var user = _db.Users.FirstOrDefault(a => a.Username == credentials.username);
+            if (user is null) { return Unauthorized(); }
+            if (!user.CheckPassword(credentials.password)) { return Unauthorized(); }
+
+            var role = Userrole.User.ToString();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                new Claim(ClaimTypes.Name, user.Username.ToString()),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, role)
+                }),
+                Expires = DateTime.UtcNow + lifetime,
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(secret),
+                    SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return Ok(new
+            {
+                user.Username,
+                Role = role,
+                UserGuid = user.Guid,
+                Token = tokenHandler.WriteToken(token)
+            });
+        }
+
+        /// <summary>
         /// POST /api/user/register
         /// </summary>
         /// <param name="credentials"></param>
@@ -101,7 +142,10 @@ namespace TaskTrackerProject.Webapi.Controllers
                 try { _db.SaveChanges(); }
                 catch (DbUpdateException) { return BadRequest(); }
             }
-            else { return Ok("User is in database"); }
+            else
+            {
+                return BadRequest("User is already in the database.");
+            }
             if (!user.CheckPassword(credentials.password)) { return Unauthorized(); }
             return Ok(user);
         }
