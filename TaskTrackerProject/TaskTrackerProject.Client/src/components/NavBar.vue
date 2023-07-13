@@ -1,6 +1,8 @@
 <script setup>
 import ProfileAvatar from "vue-profile-avatar";
 import axios from "axios";
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
@@ -78,8 +80,18 @@ export default {
       this.showSidebar = !this.showSidebar; 
     },
     logout() {
-      delete axios.defaults.headers.common['Authorization'];
-      this.$store.commit('authenticate', null);
+      if(this.$store.state.user.isLoggedIn) {
+        delete axios.defaults.headers.common['Authorization'];
+        this.$store.commit('authenticate', null);
+        toast.info("You have logged out", {
+          autoClose: 1000,
+        });
+      } 
+      else {
+        toast.warning("You are not logged in!", {
+          autoClose: 1000,
+        })
+      }
     },
   },
 }

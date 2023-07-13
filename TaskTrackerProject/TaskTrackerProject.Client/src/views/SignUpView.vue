@@ -1,6 +1,8 @@
 <script setup>
 import axios from 'axios';
 import Navbar from "../components/NavBar.vue"
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
@@ -70,7 +72,10 @@ export default {
       } catch (e) {
         if(e.response === undefined) { console.error(e); }
         else if (e.response.status == 401) {
-          alert('Login failed. Invalid credentials.');
+          toast.error("Login failed. Invalid credentials.");
+        }
+        else if (e.response.status == 400) {
+          toast.error("User is already in the database.");
         }
       }
     },

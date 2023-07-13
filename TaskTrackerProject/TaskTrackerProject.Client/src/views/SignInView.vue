@@ -1,6 +1,8 @@
 <script setup>
 import axios from 'axios';
 import Navbar from "../components/NavBar.vue"
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
@@ -70,12 +72,12 @@ export default {
 				const userdata = (await axios.post('user/login', this.loginModel)).data;
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
         this.$store.commit('authenticate', userdata);     
-        this.$router.push("/");
-        console.log("success");
+				this.$router.push("/");
+				console.log("Success!");
 			} catch (e) {
         if(e.response === undefined) { console.error(e); }
         else if (e.response.status == 401) {
-          alert('Login failed. Invalid credentials.');
+          toast.error("Login failed! Invalid credentials!");
         }
       }
 		}
