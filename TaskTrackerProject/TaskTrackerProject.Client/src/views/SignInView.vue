@@ -1,13 +1,13 @@
 <script setup>
 import axios from 'axios';
-import Navbar from "../components/NavBar.vue"
+import SideBar from "../components/SideBar.vue"
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
 <div class="wrapper">
-<Navbar/>
+	<SideBar/>
   <div class="form">
     <ul class="tab-group">
       <li class="tab active">
