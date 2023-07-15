@@ -7,11 +7,14 @@ import 'vue3-toastify/dist/index.css';
 
 <template>
 <div class="wrapper">
-  <nav id="sidebar" :class="{ 'active': showSidebar }">
+  <button class="navbar-toggler" @click="toggleSidebar()">
+    <font-awesome-icon id="bar" icon="fa-bars"/>
+  </button>
+  <nav id="sidebar" :class="{ 'toggle': showSidebar }">
     <button class="navbar-toggler" @click="toggleSidebar()">
       <font-awesome-icon id="bar" icon="fa-bars"/>
     </button>
-    <div class="sidebar-header" :class="{ 'active': showSidebar }">
+    <div class="sidebar-header" :class="{ 'toggle': showSidebar }">
       <div class="authentication-container" v-if="!authenticated">
         <router-link to="/signin" class="nav-link" >
           <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign in
@@ -36,10 +39,16 @@ import 'vue3-toastify/dist/index.css';
             <font-awesome-icon class="icon" icon="fa-list"/> All List
           </router-link>
         </li>
-        <li>
-          <router-link to="/newlist" class="nav-link">
-            <font-awesome-icon class="icon" icon="fa-plus"/> New List
+        <li class="nav-link" @click="addlist()">
+          <font-awesome-icon class="icon" icon="fa-plus"/> New List
+        </li>
+        <li v-for="link in links" :key="link.name">
+          <router-link :to="link.path" class="nav-link">
+            <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ link.name }}
           </router-link>
+        </li>
+        <li id="list-name" class="nav-link" :class="{ 'active': showInput }">
+          <font-awesome-icon class="icon" icon="fa-plus"/> <input type="text" placeholder="new list" id="list-input">
         </li>
         <li>
           <div class="nav-link" id="logout" @click="logout()">
@@ -68,8 +77,16 @@ export default {
     return {
       loginModel: {
         username: "",
-      },    
+      },  
+      links: [
+        {
+          name: "All List",
+          path: "/",
+          icon: "fa-list"
+        }
+      ],  
       showSidebar: false,
+      showInput: false,
     };
   }, 
   components: {
@@ -78,6 +95,10 @@ export default {
   methods: {
     toggleSidebar() {
       this.showSidebar = !this.showSidebar; 
+    },
+    addlist() {
+      this.showInput = !this.showInput; 
+      console.log(this.showInput);
     },
     logout() {
       if(this.$store.state.user.isLoggedIn) {
@@ -98,14 +119,12 @@ export default {
 </script>
 
 <style scoped>
-.wrapper {
-  display: flex;
-}
 #sidebar {
-  width: 150px;
+  width: 300px;
   height: 100vh;
   background-color: white;
-  overflow-y: auto
+  overflow-y: auto;
+  position: fixed;
 }
 .list-unstyled {
   padding-left: 0;
@@ -148,6 +167,17 @@ export default {
 #logout {
   cursor: pointer;
 }
+/** new list */
+#list-name {
+  display: none;
+}
+#list-name.active {
+  display: flex;
+}
+#list-input {
+  width: 100%;
+  padding: 5px 10px;
+}
 /** responsive */
 .navbar-toggler {
   display: none;
@@ -167,12 +197,14 @@ export default {
   }
   #sidebar {
     background-color: transparent;
+    display: none;
   }
 }
-.sidebar-header.active {
+.sidebar-header.toggle {
   display: block;
 }
-#sidebar.active {
+#sidebar.toggle {
   background-color: white;
+  display: block;
 }
 </style>
