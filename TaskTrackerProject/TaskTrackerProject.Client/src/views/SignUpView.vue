@@ -1,44 +1,42 @@
 <script setup>
 import axios from 'axios';
-import SideBar from "../components/SideBar.vue"
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
 <div class="wrapper">
-  <SideBar/>
   <div class="form" v-if="!authenticated">
-    <ul class="tab-group">
-      <li class="tab">
-				<router-link to="/signin" class="tab-link">
-          <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign in
-        </router-link>
-      </li>
-      <li class="tab active">
-				<router-link to="/signup" class="tab-link" >
-          <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign up
-        </router-link>
-			</li>
-    </ul>
-    <div class="form-content">
-      <div id="signup">
-        <h1>Register</h1>
-        <form @submit.prevent="register">
-          <div class="form-group">
-            <input type="text" required placeholder="Username" v-model="loginModel.username"/>
-          </div>
-          <div class="form-group">
-            <input type="email" required placeholder="Email Address" v-model="loginModel.email"/>
-          </div>
-          <div class="form-group">
-            <input type="password" required placeholder="Password" v-model="loginModel.password"/>
-          </div>
-          <button type="submit" class="button">Sign Up</button>
-        </form>
-      </div>
+  <ul class="tab-group">
+    <li class="tab">
+			<router-link to="/signin" class="tab-link">
+        <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign in
+      </router-link>
+    </li>
+    <li class="tab active">
+			<router-link to="/signup" class="tab-link" >
+        <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign up
+      </router-link>
+		</li>
+  </ul>
+  <div class="form-content">
+    <div id="signup">
+      <h1>Register</h1>
+      <form @submit.prevent="register">
+        <div class="form-group">
+          <input type="text" required placeholder="Username" v-model="loginModel.username"/>
+        </div>
+        <div class="form-group">
+          <input type="email" required placeholder="Email Address" v-model="loginModel.email"/>
+        </div>
+        <div class="form-group">
+          <input type="password" required placeholder="Password" v-model="loginModel.password"/>
+        </div>
+        <button type="submit" class="button">Sign Up</button>
+      </form>
     </div>
-  </div> 
+  </div>
+</div>
 </div>
 </template>
 
@@ -101,6 +99,7 @@ export default {
 	font-size: 17px;
   width: 500px;
   height: 600px;
+  overflow-x: auto;
 }
 .tab-group {
 	list-style: none;
@@ -111,10 +110,10 @@ export default {
 	text-decoration: none;
 	background: lightgray;
 	color: white;
-	width: 48%;
+	width: 45%;
 	float: left;
 	text-align: center;
-	margin: 0 3.5px 0 3.5px;
+	margin: 0 10px 0 10px;
 	padding: 15px;
 }
 .tab-group:after {

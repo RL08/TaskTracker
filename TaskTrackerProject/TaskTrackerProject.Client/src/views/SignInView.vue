@@ -1,13 +1,11 @@
 <script setup>
 import axios from 'axios';
-import SideBar from "../components/SideBar.vue"
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
 <div class="wrapper">
-	<SideBar/>
   <div class="form">
     <ul class="tab-group">
       <li class="tab active">
@@ -98,6 +96,7 @@ export default {
 	font-size: 17px;
   width: 500px;
   height: 600px;
+	overflow-y: auto;
 }
 .tab-group {
 	list-style: none;
@@ -108,10 +107,10 @@ export default {
 	text-decoration: none;
 	background: lightgray;
 	color: white;
-	width: 48%;
+	width: 45%;
 	float: left;
 	text-align: center;
-	margin: 0 3.5px 0 3.5px;
+	margin: 0 10px 0 10px;
 	padding: 15px;
 }
 .tab-group:after {

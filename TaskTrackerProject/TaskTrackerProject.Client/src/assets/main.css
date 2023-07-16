@@ -7,5 +7,6 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   overflow-y: hidden!important;
+  height: 100%;
 }
 

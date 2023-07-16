@@ -6,15 +6,15 @@ import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
-<div class="wrapper">
-  <button class="navbar-toggler" @click="toggleSidebar()">
+  <div class="wrapper">
+    <button class="navbar-toggler" @click="toggleSidebar()">
     <font-awesome-icon id="bar" icon="fa-bars"/>
   </button>
-  <nav id="sidebar" :class="{ 'toggle': showSidebar }">
+  <nav id="sidebar" :class="{ 'active': showSidebar }">
     <button class="navbar-toggler" @click="toggleSidebar()">
       <font-awesome-icon id="bar" icon="fa-bars"/>
     </button>
-    <div class="sidebar-header" :class="{ 'toggle': showSidebar }">
+    <div class="sidebar-header" :class="{ 'active': showSidebar }">
       <div class="authentication-container" v-if="!authenticated">
         <router-link to="/signin" class="nav-link" >
           <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign in
@@ -39,7 +39,7 @@ import 'vue3-toastify/dist/index.css';
             <font-awesome-icon class="icon" icon="fa-list"/> All List
           </router-link>
         </li>
-        <li class="nav-link" @click="addlist()">
+        <li class="nav-link" @click="showinputfield()">
           <font-awesome-icon class="icon" icon="fa-plus"/> New List
         </li>
         <li v-for="link in links" :key="link.name">
@@ -48,7 +48,8 @@ import 'vue3-toastify/dist/index.css';
           </router-link>
         </li>
         <li id="list-name" class="nav-link" :class="{ 'active': showInput }">
-          <font-awesome-icon class="icon" icon="fa-plus"/> <input type="text" placeholder="new list" id="list-input">
+          <font-awesome-icon class="icon" icon="fa-plus"/> 
+          <input type="text" placeholder="new list" id="list-input" v-model="loginModel.listname" @keyup.enter="addlist()">
         </li>
         <li>
           <div class="nav-link" id="logout" @click="logout()">
@@ -58,7 +59,7 @@ import 'vue3-toastify/dist/index.css';
       </ul>
     </div>
   </nav>
-</div>
+  </div>
 </template>
 
 <script>
@@ -72,19 +73,16 @@ export default {
         return this.$store.state.user.name;
       }
     },
+    links() {
+      return this.$store.state.user.links;
+    },
   },
   data() {
     return {
       loginModel: {
         username: "",
+        listname: "",
       },  
-      links: [
-        {
-          name: "All List",
-          path: "/",
-          icon: "fa-list"
-        }
-      ],  
       showSidebar: false,
       showInput: false,
     };
@@ -96,22 +94,31 @@ export default {
     toggleSidebar() {
       this.showSidebar = !this.showSidebar; 
     },
-    addlist() {
+    showinputfield() {
       this.showInput = !this.showInput; 
-      console.log(this.showInput);
+    },
+    addlist() {
+      if (this.showInput) {
+        const newLink = {
+          name: this.loginModel.listname,
+          path: "/list",
+          icon: "fa-solid fa-list-check",
+        };
+        this.$store.commit("addLink", newLink);
+        this.loginModel.listname = "";
+        this.showInput = !this.showInput; 
+        toast.success("New list has been created", { autoClose: 1000});
+        // console.log(this.$store.state.user.links);
+      }
     },
     logout() {
       if(this.$store.state.user.isLoggedIn) {
         delete axios.defaults.headers.common['Authorization'];
         this.$store.commit('authenticate', null);
-        toast.info("You have logged out", {
-          autoClose: 1000,
-        });
+        toast.info("You have logged out", { autoClose: 1000, });
       } 
       else {
-        toast.warning("You are not logged in!", {
-          autoClose: 1000,
-        })
+        toast.warning("You are not logged in!", { autoClose: 1000, });
       }
     },
   },
@@ -119,6 +126,9 @@ export default {
 </script>
 
 <style scoped>
+.wrapper {
+  display: flex;
+}
 #sidebar {
   width: 300px;
   height: 100vh;
@@ -183,7 +193,7 @@ export default {
   display: none;
   padding: 12px 0 0 12px;
 }
-@media screen and (max-width: 912px) {
+@media screen and (max-width: 1200px) {
   .navbar-toggler {
     display: flex;
   }
@@ -200,10 +210,10 @@ export default {
     display: none;
   }
 }
-.sidebar-header.toggle {
+.sidebar-header.active {
   display: block;
 }
-#sidebar.toggle {
+#sidebar.active {
   background-color: white;
   display: block;
 }
