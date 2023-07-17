@@ -42,15 +42,19 @@ import 'vue3-toastify/dist/index.css';
         <li class="nav-link" @click="showinputfield()">
           <font-awesome-icon class="icon" icon="fa-plus"/> New List
         </li>
-        <li v-for="link in links" :key="link.name">
-          <router-link :to="link.path" class="nav-link">
-            <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ link.name }}
+        <li v-for="list in lists" :key="list.name">
+          <router-link :to="list.path" class="nav-link">
+            <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ list.name }}
           </router-link>
         </li>
         <li id="list-name" class="nav-link" :class="{ 'active': showInput }">
           <font-awesome-icon class="icon" icon="fa-plus"/> 
           <input type="text" placeholder="new list" id="list-input" v-model="loginModel.listname" @keyup.enter="addlist()">
         </li>
+        <div class="nav-link">
+          <font-awesome-icon class="icon" icon="fa-plus"/> 
+          <button class="btn" @click="addDefaultLists">Add 10 Lists</button>
+        </div>
         <li>
           <div class="nav-link" id="logout" @click="logout()">
             <font-awesome-icon class="icon" icon="fa-right-from-bracket"/> Logout
@@ -73,8 +77,8 @@ export default {
         return this.$store.state.user.name;
       }
     },
-    links() {
-      return this.$store.state.user.links;
+    lists() {
+      return this.$store.state.user.lists;
     },
   },
   data() {
@@ -99,12 +103,12 @@ export default {
     },
     addlist() {
       if (this.showInput) {
-        const newLink = {
+        const newList = {
           name: this.loginModel.listname,
           path: "/list",
           icon: "fa-solid fa-list-check",
         };
-        this.$store.commit("addLink", newLink);
+        this.$store.commit("addList", newList);
         this.loginModel.listname = "";
         this.showInput = !this.showInput; 
         toast.success("New list has been created", { autoClose: 1000});
@@ -120,6 +124,17 @@ export default {
       else {
         toast.warning("You are not logged in!", { autoClose: 1000, });
       }
+    },
+    addDefaultLists() {
+      for (let i = 1; i <= 10; i++) {
+        const list = {
+          name: "Unknown list (" + i + ")",
+          path: "/list",
+          icon: "fa-solid fa-list-check",
+        };
+        this.$store.commit('addList', list);
+      } 
+      toast.success("Test list has been created", { autoClose: 1000});
     },
   },
 }

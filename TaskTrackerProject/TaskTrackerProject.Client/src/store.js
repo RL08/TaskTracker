@@ -7,7 +7,7 @@ export default createStore({
         name: "",
         guid: "",
         isLoggedIn: false,
-        links: [],
+        lists: [],
       }
     }
   },
@@ -22,8 +22,8 @@ export default createStore({
       state.user.role = userdata.role;
       state.user.isLoggedIn = true;
     },
-    addLink(state, link) {
-      state.user.links.push(link);
+    addList(state, list) {
+      state.user.lists.push(list);
     },
   }
 });

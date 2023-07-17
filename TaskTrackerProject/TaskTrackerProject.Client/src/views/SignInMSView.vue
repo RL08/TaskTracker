@@ -80,13 +80,11 @@ export default {
 .form {
 	background: white;
 	padding: 40px;
-	margin: 40px auto;
+	margin: 40px 40px 40px 340px;
 	border-radius: 15px;
 	box-shadow: 0 4px 10px 4px rgba(19, 35, 47, .3);
 	font-size: 17px;
-  width: 500px;
-  height: 600px;
-	overflow-y: auto;
+  flex-grow: 1;
 }
 .tab-group {
 	list-style: none;
@@ -154,5 +152,16 @@ input, textarea {
 	background: #01939c;
 	color: #fff;
 	width: 100%;
+}
+@media screen and (max-width: 1200px) {
+  .form {
+		margin: 40px auto;
+	}
+}
+@media screen and (max-height: 700px) {
+  .form {
+		height: 450px;
+		overflow-y: auto;
+	}
 }
 </style>

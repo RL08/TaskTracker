@@ -1,160 +1,83 @@
 <script setup>
-import axios from 'axios';
-import SideBar from "../components/SideBar.vue"
-import { toast } from 'vue3-toastify';
-import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
-<div class="wrapper">
-  <SideBar/>
-    <!-- <section class="main" v-show="todos.length">
-      <input
-        id="toggle-all"
-        class="toggle-all"
-        type="checkbox"
-        :checked="remaining === 0"
-        @change="toggleAll"
-      >
-      <label for="toggle-all">Mark all as complete</label>
-      <ul class="todo-list">
-        <li
-          v-for="todo in filteredTodos"
-          class="todo"
-          :key="todo.id"
-          :class="{ completed: todo.completed, editing: todo === editedTodo }"
-        >
-          <div class="view">
-            <input class="toggle" type="checkbox" v-model="todo.completed">
-            <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
-            <button class="destroy" @click="removeTodo(todo)"></button>
-          </div>
-          <input
-            v-if="todo === editedTodo"
-            class="edit"
-            type="text"
-            v-model="todo.title"
-            @vue:mounted="({ el }) => el.focus()"
-            @blur="doneEdit(todo)"
-            @keyup.enter="doneEdit(todo)"
-            @keyup.escape="cancelEdit(todo)"
-          >
-        </li>
-      </ul>
-    </section> -->
-    <!-- <footer class="footer" v-show="todos.length">
-      <span class="todo-count">
-        <strong>{{ remaining }}</strong>
-        <span>{{ remaining === 1 ? ' item' : ' items' }} left</span>
-      </span>
-      <ul class="filters">
-        <li>
-          <a href="#/all" :class="{ selected: visibility === 'all' }">All</a>
-        </li>
-        <li>
-          <a href="#/active" :class="{ selected: visibility === 'active' }">Active</a>
-        </li>
-        <li>
-          <a href="#/completed" :class="{ selected: visibility === 'completed' }">Completed</a>
-        </li>
-      </ul>
-      <button class="clear-completed" @click="removeCompleted" v-show="todos.length > remaining">
-        Clear completed
-      </button> 
-    </footer> -->
-
-</div>
+  <div class="wrapper">
+    <h1>All List</h1>
+    <div class="grid">
+      <div class="card" v-for="list in lists" :key="list.name">
+        <div class="card-body">
+          <h5 class="card-title"> {{ list.name }} </h5>
+          <h5 class="status"> Stuck </h5>
+          <progress value="20" max="100"> </progress>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 export default {
-
-}
+  computed: {
+    lists() {
+      return this.$store.state.user.lists;
+    },
+  },
+};
 </script>
 
 <style scoped>
 .wrapper {
-  display: flex;
-}
-.form {
-	background: white;
-	padding: 40px;
-	margin: 40px auto;
-	border-radius: 15px;
-	box-shadow: 0 4px 10px 4px rgba(19, 35, 47, .3);
-	font-size: 17px;
-  width: 500px;
-  height: 600px;
-}
-.tab-group {
-	list-style: none;
-	padding: 0;
-}
-.tab-link {
-  border-radius: 15px;
-	text-decoration: none;
-	background: lightgray;
-	color: white;
-	width: 48%;
-	float: left;
-	text-align: center;
-	margin: 0 3.5px 0 3.5px;
-	padding: 15px;
-}
-.tab-group:after {
-	content: "";
-	display: table;
-	clear: both;
-}
-.tab-link:hover, .button:hover{
-	background: #01939c;
-	color: #fff;
-}
-.tab-group .active a {
-	background: #01939c;
-	color: #fff;
+  overflow-y: auto;
+  max-height: calc(100vh - 50px);
 }
 h1 {
-	text-align: center;
-	margin-bottom: 40px;
-	font-weight: lighter;
+  margin: 40px 40px 40px 340px;
 }
-input, textarea {
-	width: 100%;
-	padding: 5px 10px;
-	border: 1px solid #01939c;
-	color: black;
-	border-radius: 6px;
+h5 {
+  margin-top: 20px;
 }
-.form-group {
-	margin-bottom: 40px;
+progress {
+  height:35%;
+  width:100%;
+  margin-bottom: 10px;
 }
-.form-group-icon {
-	margin-bottom: 40px;
-	font-size: 35px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 20px;
+  margin-left: 340px;
 }
-.top-row > div {
-	float: left;
-	width: 48%;
-	margin-right: 4%;
+.card {
+  background: white;
+  box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+  font-size: 17px;
+  margin-right: 40px;
+  height: 250px;
 }
-.top-row > div:last-child {
-	margin: 0;
+.status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+  background-color: red;
+  padding: 10px;
 }
-.button {
-	border: 0;
-	border-radius: 15px;
-	padding: 15px 0;
-	letter-spacing: 0.1em;
-	background: #01939c;
-	color: #fff;
-	width: 100%;
+.card-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-#ms {
-	color: #01939c;
+@media screen and (max-width: 992px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media screen and (max-width: 576px) {
+  .grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 </style>
+
 

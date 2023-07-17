@@ -7,7 +7,6 @@ import 'vue3-toastify/dist/index.css';
 
 <template>
 <div class="wrapper">
-  <SideBar/>
   <section class="todo">
     <header class="header">
       <h1>todos</h1>
