@@ -7,7 +7,14 @@ export default createStore({
         name: "",
         guid: "",
         isLoggedIn: false,
-        lists: [],
+        lists: [{
+          name: "",
+          path: "",
+          tasks: [{
+            status : "Stuck",
+            priority: "Low",
+          }]
+        }],
       }
     }
   },
@@ -24,6 +31,9 @@ export default createStore({
     },
     addList(state, list) {
       state.user.lists.push(list);
+    },
+    addTask(state, { listId, task }) {
+      state.user.lists[listId].tasks.push(task);
     },
   }
 });

@@ -34,7 +34,6 @@ import 'vue3-toastify/dist/index.css';
       </div>
       <ul class="list-unstyled">
         <li>
-          <!-- 14 char max -->
           <router-link to="/" class="nav-link"> 
             <font-awesome-icon class="icon" icon="fa-list"/> All List
           </router-link>
@@ -51,7 +50,7 @@ import 'vue3-toastify/dist/index.css';
           <font-awesome-icon class="icon" icon="fa-plus"/> 
           <input type="text" placeholder="new list" id="list-input" v-model="loginModel.listname" @keyup.enter="addlist()">
         </li>
-        <div class="nav-link">
+        <div class="nav-link" v-if="isDevelopment">
           <font-awesome-icon class="icon" icon="fa-plus"/> 
           <button class="btn" @click="addDefaultLists">Add 10 Lists</button>
         </div>
@@ -78,8 +77,11 @@ export default {
       }
     },
     lists() {
-      return this.$store.state.user.lists;
+      return this.$store.state.user.lists.filter(list => list.name !== "" && list.path !== "");
     },
+    isDevelopment() {
+      return process.env.NODE_ENV === 'development';
+    }
   },
   data() {
     return {
@@ -129,7 +131,7 @@ export default {
       for (let i = 1; i <= 10; i++) {
         const list = {
           name: "Unknown list (" + i + ")",
-          path: "/list",
+          path: "/list/" + i,
           icon: "fa-solid fa-list-check",
         };
         this.$store.commit('addList', list);
@@ -202,6 +204,9 @@ export default {
 #list-input {
   width: 100%;
   padding: 5px 10px;
+}
+.btn {
+  padding: 0;
 }
 /** responsive */
 .navbar-toggler {

@@ -98,7 +98,6 @@ export default {
 }
 .tab-group {
 	list-style: none;
-	padding: 0;
 }
 .tab-link {
   border-radius: 15px;
