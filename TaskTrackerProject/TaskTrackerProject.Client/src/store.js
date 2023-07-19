@@ -7,13 +7,18 @@ export default createStore({
         name: "",
         guid: "",
         isLoggedIn: false,
+        currentListId: null,
         lists: [{
+          id: "",
           name: "",
           path: "",
           tasks: [{
-            status : "Stuck",
-            priority: "Low",
-          }]
+            id: "",
+            name: "",
+            status : "",
+            priority: "",
+            date: "",
+          }],
         }],
       }
     }
@@ -30,10 +35,14 @@ export default createStore({
       state.user.isLoggedIn = true;
     },
     addList(state, list) {
+      list.tasks = [];
       state.user.lists.push(list);
     },
-    addTask(state, { listId, task }) {
-      state.user.lists[listId].tasks.push(task);
-    },
+    addTask(state, task) {
+      state.user.lists[state.user.currentListId].tasks.push(task);
+    },    
+    setCurrentListId(state, listId) {
+      state.user.currentListId = listId;
+    },    
   }
 });

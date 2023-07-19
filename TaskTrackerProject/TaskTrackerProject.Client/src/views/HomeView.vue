@@ -13,7 +13,7 @@
           <th>Progress</th>
         </tr>
       </thead>
-      <tbody v-for="list in lists" :key="list.id" @click="redirectTo(list.path)">
+      <tbody v-for="list in lists" :key="list.id" @click="redirectTo(list.path, list.id)">
         <tr>
           <td> {{ list.name }} </td>
           <td> Stuck </td>
@@ -22,15 +22,6 @@
         </tr>
       </tbody>
     </table>
-    <!-- <div class="grid">
-      <div class="list" v-for="list in lists" :key="list.name">
-        <div class="list-body">
-          <h5 class="list-title"> {{ list.name }} </h5>
-          <h5 class="status"> Stuck </h5>
-          <progress value="20" max="100"> </progress>
-        </div>
-      </div>
-    </div> -->
   </div>
 </template>
 
@@ -42,7 +33,8 @@ export default {
     },
   },
   methods: {
-    redirectTo(path) {
+    redirectTo(path, listId) {
+      this.$store.commit('setCurrentListId', listId);
       this.$router.push(path);
     }
   }
@@ -83,7 +75,7 @@ tbody {
 tbody:hover {
   background-color: lightgrey;
 }
-/**unnötig derzeit */
+/* unnötig derzeit
 .grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
@@ -108,7 +100,7 @@ tbody:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-}
+} */
 @media screen and (max-width: 1200px) {
   table, h1{
 		margin: 40px 40px auto;

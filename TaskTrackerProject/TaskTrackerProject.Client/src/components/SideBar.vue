@@ -41,18 +41,16 @@ import 'vue3-toastify/dist/index.css';
         <li class="nav-link" @click="showinputfield()">
           <font-awesome-icon class="icon" icon="fa-plus"/> New List
         </li>
-        <li v-for="list in lists" :key="list.name">
-          <router-link :to="list.path" class="nav-link">
-            <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ list.name }}
-          </router-link>
-        </li>
         <li id="list-name" class="nav-link" :class="{ 'active': showInput }">
           <font-awesome-icon class="icon" icon="fa-plus"/> 
           <input type="text" placeholder="new list" id="list-input" v-model="loginModel.listname" @keyup.enter="addlist()">
         </li>
+        <li class="nav-link" v-for="list in lists" :key="list.name" @click="redirectTo(list.path, list.id)">
+          <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ list.name }}
+        </li>
         <div class="nav-link" v-if="isDevelopment">
           <font-awesome-icon class="icon" icon="fa-plus"/> 
-          <button class="btn" @click="addDefaultLists">Add 10 Lists</button>
+          <button class="btn" @click="addDefaultLists">Add 10 Lists </button>
         </div>
         <li>
           <div class="nav-link" id="logout" @click="logout()">
@@ -103,9 +101,14 @@ export default {
     showinputfield() {
       this.showInput = !this.showInput; 
     },
+    redirectTo(path, listId) {
+      this.$store.commit('setCurrentListId', listId);
+      this.$router.push(path);
+    },
     addlist() {
       if (this.showInput) {
         const newList = {
+          id: this.$store.state.user.lists.length,
           name: this.loginModel.listname,
           path: "/list",
           icon: "fa-solid fa-list-check",
@@ -131,8 +134,9 @@ export default {
       for (let i = 1; i <= 10; i++) {
         const list = {
           name: "Unknown list (" + i + ")",
-          path: "/list/" + i,
+          path: "/list",
           icon: "fa-solid fa-list-check",
+          id: this.$store.state.user.lists.length,
         };
         this.$store.commit('addList', list);
       } 
