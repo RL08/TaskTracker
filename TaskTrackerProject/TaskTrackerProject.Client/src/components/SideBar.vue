@@ -75,7 +75,7 @@ export default {
       }
     },
     lists() {
-      return this.$store.state.user.lists.filter(list => list.name !== "" && list.path !== "");
+      return this.$store.state.user.lists;
     },
     isDevelopment() {
       return process.env.NODE_ENV === 'development';

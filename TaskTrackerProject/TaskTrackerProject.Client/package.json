@@ -26,6 +26,7 @@
     "vue-profile-avatar": "^1.2.0",
     "vue-router": "^4.2.4",
     "vue-toasted": "^1.1.28",
+    "vue3-datepicker": "^0.4.0",
     "vue3-toastify": "^0.1.11",
     "vuejs-progress-bar": "^1.2.8",
     "vuex": "^4.1.0"

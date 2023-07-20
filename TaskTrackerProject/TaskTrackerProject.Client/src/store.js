@@ -7,18 +7,18 @@ export default createStore({
         name: "",
         guid: "",
         isLoggedIn: false,
-        currentListId: null,
         lists: [{
-          id: "",
-          name: "",
-          path: "",
+          id: "0",
+          name: "GetStarted",
+          path: "/list",
+          currentListId: null,
           tasks: [{
-            id: "",
-            name: "",
-            status : "",
-            priority: "",
-            date: "",
-          }],
+            id: "1",
+            name: "Run 10 km",
+            status : "Not Finished",
+            priority: "Low",
+            date: "∞",
+          }],          
         }],
       }
     }

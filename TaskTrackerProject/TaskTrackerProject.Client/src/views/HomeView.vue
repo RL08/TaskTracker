@@ -16,9 +16,9 @@
       <tbody v-for="list in lists" :key="list.id" @click="redirectTo(list.path, list.id)">
         <tr>
           <td> {{ list.name }} </td>
-          <td> Stuck </td>
-          <td> Low </td>
-          <td> <progress value="20" max="100"> </progress> </td>
+          <td> {{ getListStatus(list) }} </td>
+          <td> {{ getListPriority(list) }} </td>
+          <td> <progress :value="getCompletedTaskCount(list)" :max="list.tasks.length"> </progress> </td>
         </tr>
       </tbody>
     </table>
@@ -29,15 +29,46 @@
 export default {
   computed: {
     lists() {
-      return this.$store.state.user.lists.filter(list => list.name !== "" && list.path !== "");
+      return this.$store.state.user.lists;
     },
   },
   methods: {
     redirectTo(path, listId) {
       this.$store.commit('setCurrentListId', listId);
       this.$router.push(path);
-    }
-  }
+    },
+    getListStatus(list) {
+      if(list.tasks.length === 0) {
+        return "No Status";
+      }
+      else if (list.tasks.some((task) => task.status === "Not Finished")) {
+        return "Not Finished";
+      } 
+      else if (list.tasks.some((task) => task.status === "In Progress")) {
+        return "In Progress";
+      } 
+      else {
+        return "Completed";
+      }
+    },
+    getListPriority(list) {
+      if(list.tasks.length === 0) {
+        return "No Priority";
+      }
+      else if (list.tasks.some((task) => task.priority === "Low")) {
+        return "Low";
+      }
+      else if (list.tasks.some((task) => task.status === "Mid")) {
+        return "Mid";
+      }
+      else { 
+        return "High";
+      }
+    },
+    getCompletedTaskCount(list) {
+      return list.tasks.filter((task) => task.status === "Finished").length;
+    },
+  },
 };
 </script>
 
@@ -75,32 +106,6 @@ tbody {
 tbody:hover {
   background-color: lightgrey;
 }
-/* unnötig derzeit
-.grid {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  grid-gap: 20px;
-  margin-left: 340px;
-}
-.list {
-  background: white;
-  box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
-  font-size: 17px;
-  margin-right: 40px;
-  height: 250px;
-}
-.status {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: red;
-  padding: 10px;
-}
-.list-title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
 @media screen and (max-width: 1200px) {
   table, h1{
 		margin: 40px 40px auto;

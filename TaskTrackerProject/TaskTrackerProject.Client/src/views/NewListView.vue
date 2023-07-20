@@ -1,8 +1,7 @@
 <script setup>
-import axios from 'axios';
-import SideBar from "../components/SideBar.vue"
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import Datepicker from 'vue3-datepicker'
 </script>
 
 <template>
@@ -29,11 +28,24 @@ import 'vue3-toastify/dist/index.css';
     <div class="input-field">
       <input type="text" required placeholder="Add Task" v-model="listModel.task" @keyup.enter=addTask()>
       <div class="icon-box" v-if="this.listModel.task !== ''">
-        <font-awesome-icon class="icon" id="icon" icon="fa-solid fa-battery-quarter" />
-        <font-awesome-icon class="icon" icon="fa-solid fa-triangle-exclamation" /> 
-        <font-awesome-icon class="icon" icon="fa fa-calendar" @click="setStatus()" /> 
+        <font-awesome-icon class="icon" id="icon" icon="fa-solid fa-battery-quarter" @click="toggleStatusBox()" />
+        <font-awesome-icon class="icon" icon="fa-solid fa-triangle-exclamation" @click="togglePriorityBox()" /> 
+        <font-awesome-icon class="icon" icon="fa fa-calendar" @click="toggleDateBox()"/> 
         <font-awesome-icon class="icon" icon="fa-solid fa-clock" /> 
         <font-awesome-icon class="icon" icon="fa-solid fa-repeat" /> 
+      </div>
+      <div class="icon-box" v-if="showStatusBox">
+        <button class="bg-danger" @click="setStatus('Not Finished')"> Not Finished </button>
+        <button class="bg-warning" @click="setStatus('In Progress')"> In Progress </button>
+        <button class="bg-success" @click="setStatus('Completed')"> Completed </button>
+      </div>
+      <div class="icon-box" v-if="showPriorityBox">
+        <button class="bg-danger"  @click="setPriority('Low')"> Low </button>
+        <button class="bg-warning" @click="setPriority('Mid')"> Mid </button>
+        <button class="bg-success" @click="setPriority('High')"> High </button>
+      </div>
+      <div class="icon-box" id="datepicker" v-if="showDateBox"> 
+        <Datepicker v-model="this.listModel.taskdate" @keyup.enter="toggleDateBox()"/>
       </div>
     </div>
   </div>
@@ -50,34 +62,60 @@ export default {
 		return {
 			listModel: {
 				task: "",
-			}
+        taskstatus: "Not Finished",
+        taskpriority: "Low",
+        taskdate: new Date(),
+			},
+      showStatusBox: false,
+      showPriorityBox: false,
+      showDateBox: false,
 		}
 	},
+  components: {
+    Datepicker,
+  },
   methods: {
     addTask() {
       const newTask = {
         id: this.list.tasks.length,
         name: this.listModel.task,
-        status: "Not Finished",
-        priority: "Low",
-        date: "∞",
+        status: this.listModel.taskstatus,
+        priority: this.listModel.taskpriority,
+        /**
+         * if showDateBox is true -> this.listModel.taskdate 
+         * if showDateBox is false -> ∞
+         */
+        date: this.showDateBox ? this.listModel.taskdate : "∞", 
       };
       this.$store.commit("addTask", newTask);
       this.listModel.task = ""; 
       toast.success("Task added", { autoClose: 1000, });
     },
-    setStatus() {
-      console.log("Something happend !!!")
-    }
+    toggleStatusBox() {
+      this.showStatusBox = !this.showStatusBox;
+    },
+    setStatus(status) {
+      this.listModel.taskstatus = status;
+      this.showStatusBox = false; 
+    },
+    togglePriorityBox() {
+      this.showPriorityBox = !this.showPriorityBox;
+    },
+    setPriority(priority) {
+      this.listModel.taskpriority = priority;
+      this.showPriorityBox = false; 
+    },
+    toggleDateBox() {
+      this.showDateBox = !this.showDateBox;
+    },
+    exitDatePicker() {
+      this.showPriorityBox = false; 
+    },
   }
 }
 </script>
 
 <style scoped>
-.wrapper {
-  overflow-y: auto;
-  max-height: calc(100vh - 1px);
-}
 h1 {
   color: white;
   margin: 20px 0 0 340px;
@@ -115,8 +153,13 @@ input {
 	color: black;
 	border-radius: 6px;
 }
+button {
+  border-radius: 6px;
+  margin-right: 10px;
+  padding: 5px;
+}
 .icon-box {
-  margin: 5px 0 0 340px; 
+  margin: 5px 0 10px 340px; 
   width: 75vw;
   background-color: white;
   padding: 5px 10px;
@@ -132,6 +175,9 @@ input {
 }
 .icon:hover {
   background-color: lightgrey;
+}
+#datepicker {
+  height: 360px;
 }
 @media screen and (max-width: 1200px) {
   table, h1, input, .icon-box{
