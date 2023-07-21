@@ -5,8 +5,11 @@ import Datepicker from 'vue3-datepicker'
 </script>
 
 <template>
-  <h1> {{ list.name }} </h1>
-  <div class="wrapper">
+  <div class="wrapper" ref="wrapper">
+    <div class="listname">
+      <button id="back" @click="redirectToHome()"> Back </button> 
+      <h1> {{ list.name }} </h1>
+    </div>
     <table class="table table-striped table-bordered">
       <thead>
         <tr>
@@ -25,6 +28,19 @@ import Datepicker from 'vue3-datepicker'
         </tr>
       </tbody>
     </table>
+    <div class="icon-box" id="datepicker" v-if="showDateBox"> 
+      <Datepicker v-model="this.listModel.taskdate" @keyup.enter="toggleDateBox()"/>
+    </div>
+    <div class="icon-box" v-if="showStatusBox">
+      <button class="bg-danger" @click="setStatus('Not Finished')"> Not Finished </button>
+      <button class="bg-warning" @click="setStatus('In Progress')"> In Progress </button>
+      <button class="bg-success" @click="setStatus('Completed')"> Completed </button>
+    </div>
+    <div class="icon-box" v-if="showPriorityBox">
+      <button class="bg-danger"  @click="setPriority('Low')"> Low </button>
+      <button class="bg-warning" @click="setPriority('Mid')"> Mid </button>
+      <button class="bg-success" @click="setPriority('High')"> High </button>
+    </div>
     <div class="input-field">
       <input type="text" required placeholder="Add Task" v-model="listModel.task" @keyup.enter=addTask()>
       <div class="icon-box" v-if="this.listModel.task !== ''">
@@ -33,19 +49,6 @@ import Datepicker from 'vue3-datepicker'
         <font-awesome-icon class="icon" icon="fa fa-calendar" @click="toggleDateBox()"/> 
         <font-awesome-icon class="icon" icon="fa-solid fa-clock" /> 
         <font-awesome-icon class="icon" icon="fa-solid fa-repeat" /> 
-      </div>
-      <div class="icon-box" v-if="showStatusBox">
-        <button class="bg-danger" @click="setStatus('Not Finished')"> Not Finished </button>
-        <button class="bg-warning" @click="setStatus('In Progress')"> In Progress </button>
-        <button class="bg-success" @click="setStatus('Completed')"> Completed </button>
-      </div>
-      <div class="icon-box" v-if="showPriorityBox">
-        <button class="bg-danger"  @click="setPriority('Low')"> Low </button>
-        <button class="bg-warning" @click="setPriority('Mid')"> Mid </button>
-        <button class="bg-success" @click="setPriority('High')"> High </button>
-      </div>
-      <div class="icon-box" id="datepicker" v-if="showDateBox"> 
-        <Datepicker v-model="this.listModel.taskdate" @keyup.enter="toggleDateBox()"/>
       </div>
     </div>
   </div>
@@ -69,6 +72,7 @@ export default {
       showStatusBox: false,
       showPriorityBox: false,
       showDateBox: false,
+      accessDateBox: false,
 		}
 	},
   components: {
@@ -82,14 +86,22 @@ export default {
         status: this.listModel.taskstatus,
         priority: this.listModel.taskpriority,
         /**
-         * if showDateBox is true -> this.listModel.taskdate 
-         * if showDateBox is false -> ∞
+         * if accessDateBox is true -> this.listModel.taskdate.toDateString()
+         * if accessDateBox is false -> ∞ 
          */
-        date: this.showDateBox ? this.listModel.taskdate : "∞", 
+        date: this.accessDateBox ? this.listModel.taskdate.toDateString() : "∞", 
       };
+      this.accessDateBox = false;
       this.$store.commit("addTask", newTask);
       this.listModel.task = ""; 
       toast.success("Task added", { autoClose: 1000, });
+    },
+    scrollToBottom() {
+      const wrapper = this.$refs.wrapper;
+      wrapper.scrollTop = wrapper.scrollHeight;
+    },
+    redirectToHome() {
+      this.$router.push("/");
     },
     toggleStatusBox() {
       this.showStatusBox = !this.showStatusBox;
@@ -107,10 +119,21 @@ export default {
     },
     toggleDateBox() {
       this.showDateBox = !this.showDateBox;
+      this.accessDateBox = true;
     },
     exitDatePicker() {
       this.showPriorityBox = false; 
     },
+  },
+  watch: {
+    'listModel.taskdate': { 
+      handler () {
+        this.showDateBox = !this.showDateBox;
+      },
+    },
+  },
+  updated() {
+    this.scrollToBottom();
   }
 }
 </script>
@@ -118,15 +141,16 @@ export default {
 <style scoped>
 h1 {
   color: white;
-  margin: 20px 0 0 340px;
+  margin: 20px 0 10px 0;
 }
-h5 {
-  margin-top: 20px;
+.wrapper {
+  overflow-y: auto;
+  height: 100vh;
 }
 table {
   margin: 40px 40px 80px 340px; 
   background-color: white;
-  width: 75vw;
+  width: 70vw;
 }
 table, th, td {
   border:1px solid black;
@@ -134,10 +158,6 @@ table, th, td {
 }
 th, td {
   width: 100vh;
-}
-progress {
-  width: 100%;
-  height: 20px;
 }
 tbody {
   cursor: pointer;
@@ -147,7 +167,7 @@ tbody:hover {
 }
 input {
   margin: 40px 0 0 340px; 
-	width: 75vw;
+	width: 70vw;
 	padding: 5px 10px;
 	border: 1px solid black;
 	color: black;
@@ -158,9 +178,17 @@ button {
   margin-right: 10px;
   padding: 5px;
 }
+#back {
+  margin: 20px 20px 10px 340px;
+  width: 100px;
+}
+.listname {
+  display: flex;
+  align-items: center;
+}
 .icon-box {
   margin: 5px 0 10px 340px; 
-  width: 75vw;
+  width: 70vw;
   background-color: white;
   padding: 5px 10px;
 	border: 1px solid black;
@@ -176,13 +204,12 @@ button {
 .icon:hover {
   background-color: lightgrey;
 }
-#datepicker {
-  height: 360px;
-}
 @media screen and (max-width: 1200px) {
-  table, h1, input, .icon-box{
-		margin: 40px 40px auto;
+  table, h1, #back, input, .icon-box{
+		margin: 10px 40px auto;
 	}
+  h1, #back {
+    margin-bottom: 10px;
+  }
 }
 </style>
-
