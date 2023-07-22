@@ -6,12 +6,11 @@ import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
-  <div class="wrapper">
-    <button class="navbar-toggler" @click="toggleSidebar()">
+  <button class="navbar-toggler" id="first-navbar-toggler" :class="{ 'active': showNavbar }" @click="toggleSidebar()">
     <font-awesome-icon id="bar" icon="fa-bars"/>
   </button>
   <nav id="sidebar" :class="{ 'active': showSidebar }">
-    <button class="navbar-toggler" @click="toggleSidebar()">
+    <button class="navbar-toggler" :class="{ 'active': showNavbar }" @click="toggleSidebar()">
       <font-awesome-icon id="bar" icon="fa-bars"/>
     </button>
     <div class="sidebar-header" :class="{ 'active': showSidebar }">
@@ -60,7 +59,6 @@ import 'vue3-toastify/dist/index.css';
       </ul>
     </div>
   </nav>
-  </div>
 </template>
 
 <script>
@@ -88,6 +86,7 @@ export default {
         listname: "",
       },  
       showSidebar: false,
+      showNavbar: false,
       showInput: false,
     };
   }, 
@@ -97,6 +96,7 @@ export default {
   methods: {
     toggleSidebar() {
       this.showSidebar = !this.showSidebar; 
+      this.showNavbar = !this.showNavbar;
     },
     showinputfield() {
       this.showInput = !this.showInput; 
@@ -133,7 +133,7 @@ export default {
     addDefaultLists() {
       for (let i = 1; i <= 10; i++) {
         const list = {
-          name: "Unknown list (" + i + ")",
+          name: "Unknown list (" + this.$store.state.user.lists.length + ")",
           path: "/list",
           icon: "fa-solid fa-list-check",
           id: this.$store.state.user.lists.length,
@@ -147,9 +147,6 @@ export default {
 </script>
 
 <style scoped>
-.wrapper {
-  display: flex;
-}
 #sidebar {
   width: 300px;
   height: 100vh;
@@ -213,13 +210,16 @@ export default {
   padding: 0;
 }
 /** responsive */
-.navbar-toggler {
+#first-navbar-toggler {
   display: none;
+}
+.navbar-toggler {
   padding: 12px 0 0 12px;
 }
-@media screen and (max-width: 1200px) {
-  .navbar-toggler {
-    display: flex;
+@media screen and (max-width: 1250px) {
+  #first-navbar-toggler {
+    display: block;
+    position: absolute;
   }
   #bar {
     border: 2px solid black;
@@ -240,5 +240,8 @@ export default {
 #sidebar.active {
   background-color: white;
   display: block;
+}
+#first-navbar-toggler.active {
+  display: none;
 }
 </style>

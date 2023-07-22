@@ -2,10 +2,12 @@
 import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import SideBar from "../components/SideBar.vue"
 </script>
 
 <template>
 <div class="wrapper">
+  <SideBar/>
   <div class="form" v-if="!authenticated">
   <ul class="tab-group">
     <li class="tab">
@@ -153,7 +155,7 @@ input, textarea {
 }
 @media screen and (max-width: 1200px) {
   .form {
-		margin: 40px auto;
+		margin: 60px 20px auto;
 	}
 }
 @media screen and (max-height: 700px) {

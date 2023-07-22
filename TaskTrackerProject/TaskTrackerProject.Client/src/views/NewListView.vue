@@ -1,13 +1,15 @@
 <script setup>
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
-import Datepicker from 'vue3-datepicker'
+import Calendar from 'primevue/calendar';
+import SideBar from "../components/SideBar.vue"
 </script>
 
 <template>
   <div class="wrapper" ref="wrapper">
+    <SideBar/>
     <div class="listname">
-      <button id="back" @click="redirectToHome()"> Back </button> 
+      <button id="back" @click="redirectToHome()"> <font-awesome-icon icon="fa-solid fa-caret-left" /> Back </button> 
       <h1> {{ list.name }} </h1>
     </div>
     <table class="table table-striped table-bordered">
@@ -29,7 +31,7 @@ import Datepicker from 'vue3-datepicker'
       </tbody>
     </table>
     <div class="icon-box" id="datepicker" v-if="showDateBox"> 
-      <Datepicker v-model="this.listModel.taskdate" @keyup.enter="toggleDateBox()"/>
+      <Calendar v-model="this.listModel.taskdate" dateFormat="dd/mm/yy" showIcon showButtonBar touchUI />
     </div>
     <div class="icon-box" v-if="showStatusBox">
       <button class="bg-danger" @click="setStatus('Not Finished')"> Not Finished </button>
@@ -42,7 +44,6 @@ import Datepicker from 'vue3-datepicker'
       <button class="bg-success" @click="setPriority('High')"> High </button>
     </div>
     <div class="input-field">
-      <input type="text" required placeholder="Add Task" v-model="listModel.task" @keyup.enter=addTask()>
       <div class="icon-box" v-if="this.listModel.task !== ''">
         <font-awesome-icon class="icon" id="icon" icon="fa-solid fa-battery-quarter" @click="toggleStatusBox()" />
         <font-awesome-icon class="icon" icon="fa-solid fa-triangle-exclamation" @click="togglePriorityBox()" /> 
@@ -50,6 +51,7 @@ import Datepicker from 'vue3-datepicker'
         <font-awesome-icon class="icon" icon="fa-solid fa-clock" /> 
         <font-awesome-icon class="icon" icon="fa-solid fa-repeat" /> 
       </div>
+      <input type="text" required placeholder="Add Task" v-model="listModel.task" @keyup.enter=addTask()> 
     </div>
   </div>
 </template>
@@ -76,11 +78,12 @@ export default {
 		}
 	},
   components: {
-    Datepicker,
+    Calendar,
   },
   methods: {
     addTask() {
-      const newTask = {
+      if(this.listModel.task !== "") {
+        const newTask = {
         id: this.list.tasks.length,
         name: this.listModel.task,
         status: this.listModel.taskstatus,
@@ -95,6 +98,7 @@ export default {
       this.$store.commit("addTask", newTask);
       this.listModel.task = ""; 
       toast.success("Task added", { autoClose: 1000, });
+      }
     },
     scrollToBottom() {
       const wrapper = this.$refs.wrapper;
@@ -120,10 +124,7 @@ export default {
     toggleDateBox() {
       this.showDateBox = !this.showDateBox;
       this.accessDateBox = true;
-    },
-    exitDatePicker() {
-      this.showPriorityBox = false; 
-    },
+    }
   },
   watch: {
     'listModel.taskdate': { 
@@ -150,7 +151,7 @@ h1 {
 table {
   margin: 40px 40px 80px 340px; 
   background-color: white;
-  width: 70vw;
+  width: 65vw;
 }
 table, th, td {
   border:1px solid black;
@@ -166,8 +167,8 @@ tbody:hover {
   background-color: lightgrey;
 }
 input {
-  margin: 40px 0 0 340px; 
-	width: 70vw;
+  margin: 20px 0 10px 340px; 
+	width: 65vw;
 	padding: 5px 10px;
 	border: 1px solid black;
 	color: black;
@@ -188,7 +189,7 @@ button {
 }
 .icon-box {
   margin: 5px 0 10px 340px; 
-  width: 70vw;
+  width: 65vw;
   background-color: white;
   padding: 5px 10px;
 	border: 1px solid black;
@@ -204,12 +205,19 @@ button {
 .icon:hover {
   background-color: lightgrey;
 }
-@media screen and (max-width: 1200px) {
-  table, h1, #back, input, .icon-box{
-		margin: 10px 40px auto;
-	}
-  h1, #back {
-    margin-bottom: 10px;
+@media screen and (max-width: 1250px) {
+  input {
+    display: block;
+    margin: 0 auto;
+  }
+  table, .icon-box {
+		margin: 10px auto;
+	} 
+  #back {
+    margin-left: auto;
+  }
+  h1 {
+    margin-right: auto;
   }
 }
 </style>

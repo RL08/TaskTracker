@@ -1,9 +1,11 @@
 <script setup>
+import SideBar from "../components/SideBar.vue"
 </script>
 
 <template>
-  <h1>All List</h1>
   <div class="wrapper">
+  <SideBar/>
+  <h1>All List</h1>
     <table class="table table-striped table-bordered">
       <thead>
         <tr>
@@ -66,7 +68,7 @@ export default {
       }
     },
     getCompletedTaskCount(list) {
-      return list.tasks.filter((task) => task.status === "Finished").length;
+      return list.tasks.filter((task) => task.status === "Completed").length;
     },
   },
 };
@@ -75,7 +77,7 @@ export default {
 <style scoped>
 .wrapper {
   overflow-y: auto;
-  max-height: calc(100vh - 1px);
+  height: 100vh;
 }
 h1 {
   color: white;
@@ -87,7 +89,7 @@ h5 {
 table {
   margin: 40px 40px 80px 340px; 
   background-color: white;
-  width: 75vw;
+  width: 70vw;
 }
 table, th, td {
   border:1px solid black;
@@ -106,9 +108,10 @@ tbody {
 tbody:hover {
   background-color: lightgrey;
 }
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1250px) {
   table, h1{
-		margin: 40px 40px auto;
+		margin: 10px auto;
+    text-align: center;
 	}
 }
 </style>
