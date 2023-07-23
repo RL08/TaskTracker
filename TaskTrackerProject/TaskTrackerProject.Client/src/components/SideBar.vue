@@ -40,6 +40,10 @@ import 'vue3-toastify/dist/index.css';
         <li class="nav-link" @click="showinputfield()">
           <font-awesome-icon class="icon" icon="fa-plus"/> New List
         </li>
+        <div class="nav-link" v-if="isDevelopment">
+          <font-awesome-icon class="icon" icon="fa-plus"/> 
+          <button class="btn" @click="addDefaultLists">Add 10 Lists </button>
+        </div>
         <li id="list-name" class="nav-link" :class="{ 'active': showInput }">
           <font-awesome-icon class="icon" icon="fa-plus"/> 
           <input type="text" placeholder="new list" id="list-input" v-model="loginModel.listname" @keyup.enter="addlist()">
@@ -47,10 +51,6 @@ import 'vue3-toastify/dist/index.css';
         <li class="nav-link" v-for="list in lists" :key="list.name" @click="redirectTo(list.path, list.id)">
           <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ list.name }}
         </li>
-        <div class="nav-link" v-if="isDevelopment">
-          <font-awesome-icon class="icon" icon="fa-plus"/> 
-          <button class="btn" @click="addDefaultLists">Add 10 Lists </button>
-        </div>
         <li>
           <div class="nav-link" id="logout" @click="logout()">
             <font-awesome-icon class="icon" icon="fa-right-from-bracket"/> Logout
@@ -148,7 +148,7 @@ export default {
 
 <style scoped>
 #sidebar {
-  width: 300px;
+  width: 200px;
   height: 100vh;
   background-color: white;
   overflow-y: auto;
@@ -214,12 +214,16 @@ export default {
   display: none;
 }
 .navbar-toggler {
-  padding: 12px 0 0 12px;
+  margin: 30px 0 0 10px;
+  display: none;
 }
 @media screen and (max-width: 1250px) {
   #first-navbar-toggler {
     display: block;
     position: absolute;
+  }
+  .navbar-toggler {
+    display: block;
   }
   #bar {
     border: 2px solid black;

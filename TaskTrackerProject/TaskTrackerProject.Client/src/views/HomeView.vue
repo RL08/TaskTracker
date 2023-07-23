@@ -4,26 +4,28 @@ import SideBar from "../components/SideBar.vue"
 
 <template>
   <div class="wrapper">
-  <SideBar/>
-  <h1>All List</h1>
-    <table class="table table-striped table-bordered">
-      <thead>
-        <tr>
-          <th>List</th>
-          <th>Status</th>
-          <th>Priority</th>
-          <th>Progress</th>
-        </tr>
-      </thead>
-      <tbody v-for="list in lists" :key="list.id" @click="redirectTo(list.path, list.id)">
-        <tr>
-          <td> {{ list.name }} </td>
-          <td> {{ getListStatus(list) }} </td>
-          <td> {{ getListPriority(list) }} </td>
-          <td> <progress :value="getCompletedTaskCount(list)" :max="list.tasks.length"> </progress> </td>
-        </tr>
-      </tbody>
-    </table>
+    <SideBar/>
+    <h1>All List</h1>
+    <div class="table-container">
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>List</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Progress</th>
+          </tr>
+        </thead>
+        <tbody v-for="list in lists" :key="list.id" @click="redirectTo(list.path, list.id)">
+          <tr>
+            <td> {{ list.name }} </td>
+            <td> {{ getListStatus(list) }} </td>
+            <td> {{ getListPriority(list) }} </td>
+            <td> <progress :value="getCompletedTaskCount(list)" :max="list.tasks.length"> </progress> </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -79,15 +81,17 @@ export default {
   overflow-y: auto;
   height: 100vh;
 }
+.table-container {
+  display: flex;
+  justify-content: center; 
+  margin-left: 200px;
+}
 h1 {
   color: white;
-  margin: 20px 0 0 340px;
-}
-h5 {
-  margin-top: 20px;
+  margin: 80px 0 10px 200px;
+  text-align: center;
 }
 table {
-  margin: 40px 40px 80px 340px; 
   background-color: white;
   width: 70vw;
 }
@@ -97,6 +101,7 @@ table, th, td {
 }
 th, td {
   width: 100vh;
+  text-align: center;
 }
 progress {
   width: 100%;
@@ -109,10 +114,10 @@ tbody:hover {
   background-color: lightgrey;
 }
 @media screen and (max-width: 1250px) {
-  table, h1{
-		margin: 10px auto;
-    text-align: center;
-	}
+  .table-container, 
+  h1 {
+    margin-left: 0;
+  }
 }
 </style>
 

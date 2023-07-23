@@ -8,49 +8,59 @@ import SideBar from "../components/SideBar.vue"
 <template>
   <div class="wrapper" ref="wrapper">
     <SideBar/>
-    <div class="listname">
+    <div class="button-container">
       <button id="back" @click="redirectToHome()"> <font-awesome-icon icon="fa-solid fa-caret-left" /> Back </button> 
-      <h1> {{ list.name }} </h1>
     </div>
-    <table class="table table-striped table-bordered">
-      <thead>
-        <tr>
-          <th>Task</th>
-          <th>Status</th>
-          <th>Priority</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody v-for="task in list.tasks" :key="task.id">
-        <tr>
-          <td> {{ task.name }} </td>
-          <td> {{ task.status }} </td>
-          <td> {{ task.priority }} </td>
-          <td> {{ task.date }} </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="icon-box" id="datepicker" v-if="showDateBox"> 
-      <Calendar v-model="this.listModel.taskdate" dateFormat="dd/mm/yy" showIcon showButtonBar touchUI />
+    <h1> {{ list.name }} </h1>
+    <div class="table-container">
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody v-for="task in list.tasks" :key="task.id">
+          <tr>
+            <td> {{ task.name }} </td>
+            <td> {{ task.status }} </td>
+            <td> {{ task.priority }} </td>
+            <td> {{ task.date }} </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <div class="icon-box" v-if="showStatusBox">
-      <button class="bg-danger" @click="setStatus('Not Finished')"> Not Finished </button>
-      <button class="bg-warning" @click="setStatus('In Progress')"> In Progress </button>
-      <button class="bg-success" @click="setStatus('Completed')"> Completed </button>
+    <div class="icon-container">
+      <div class="icon-box" v-if="showStatusBox">
+        <button class="bg-danger" @click="setStatus('Not Finished')"> Not Finished </button>
+        <button class="bg-warning" @click="setStatus('In Progress')"> In Progress </button>
+        <button class="bg-success" @click="setStatus('Completed')"> Completed </button>
+      </div>
     </div>
-    <div class="icon-box" v-if="showPriorityBox">
-      <button class="bg-danger"  @click="setPriority('Low')"> Low </button>
-      <button class="bg-warning" @click="setPriority('Mid')"> Mid </button>
-      <button class="bg-success" @click="setPriority('High')"> High </button>
+    <div class="icon-container">
+      <div class="icon-box" v-if="showPriorityBox">
+        <button class="bg-danger"  @click="setPriority('Low')"> Low </button>
+        <button class="bg-warning" @click="setPriority('Mid')"> Mid </button>
+        <button class="bg-success" @click="setPriority('High')"> High </button>
+      </div>
     </div>
-    <div class="input-field">
-      <div class="icon-box" v-if="this.listModel.task !== ''">
+    <div class="icon-container">
+      <div class="icon-box" id="datepicker" v-if="showDateBox"> 
+        <Calendar v-model="this.listModel.taskdate" dateFormat="dd/mm/yy" showIcon showButtonBar/>
+      </div>
+    </div>
+    <div class="icon-container" id="fa-icon-container">
+      <div class="icon-box" id="fa-icon-box" v-if="this.listModel.task !== ''">
         <font-awesome-icon class="icon" id="icon" icon="fa-solid fa-battery-quarter" @click="toggleStatusBox()" />
         <font-awesome-icon class="icon" icon="fa-solid fa-triangle-exclamation" @click="togglePriorityBox()" /> 
         <font-awesome-icon class="icon" icon="fa fa-calendar" @click="toggleDateBox()"/> 
         <font-awesome-icon class="icon" icon="fa-solid fa-clock" /> 
         <font-awesome-icon class="icon" icon="fa-solid fa-repeat" /> 
       </div>
+    </div>
+    <div class="input-container">
       <input type="text" required placeholder="Add Task" v-model="listModel.task" @keyup.enter=addTask()> 
     </div>
   </div>
@@ -142,16 +152,38 @@ export default {
 <style scoped>
 h1 {
   color: white;
-  margin: 20px 0 10px 0;
+  margin: 80px 0 10px 200px;
+  text-align: center;
+}
+.button-container {
+  display: flex;
+  justify-content: left; 
+  margin-left: 200px;
+}
+button {
+  border-radius: 6px;
+  padding: 5px;
+  width: 33%;
+}
+#back {
+  position: absolute;
+  border-radius: 6px;
+  margin: 20px;
+  padding: 5px;
+  width: 100px;
 }
 .wrapper {
   overflow-y: auto;
   height: 100vh;
 }
+.table-container {
+  display: flex;
+  justify-content: center; 
+  margin: 0 0 10px 200px;
+}
 table {
-  margin: 40px 40px 80px 340px; 
   background-color: white;
-  width: 65vw;
+  width: 70vw;
 }
 table, th, td {
   border:1px solid black;
@@ -159,6 +191,7 @@ table, th, td {
 }
 th, td {
   width: 100vh;
+  text-align: center;
 }
 tbody {
   cursor: pointer;
@@ -166,30 +199,32 @@ tbody {
 tbody:hover {
   background-color: lightgrey;
 }
+.input-container {
+  display: flex;
+  justify-content: center; 
+  margin: 5px 0 10px 200px;
+}
 input {
-  margin: 20px 0 10px 340px; 
-	width: 65vw;
+  display: flex;
+  justify-content: center;
+	width: 70vw;
 	padding: 5px 10px;
 	border: 1px solid black;
-	color: black;
 	border-radius: 6px;
 }
-button {
-  border-radius: 6px;
-  margin-right: 10px;
-  padding: 5px;
-}
-#back {
-  margin: 20px 20px 10px 340px;
-  width: 100px;
-}
-.listname {
+.icon-container {
   display: flex;
-  align-items: center;
+  justify-content: center; 
+  margin-left: 200px;
+  margin-top: 5px; 
+}
+#fa-icon-container {
+  margin-top: 10px;
 }
 .icon-box {
-  margin: 5px 0 10px 340px; 
-  width: 65vw;
+  display: flex;
+  justify-content: center;
+  width: 70vw;
   background-color: white;
   padding: 5px 10px;
 	border: 1px solid black;
@@ -205,19 +240,18 @@ button {
 .icon:hover {
   background-color: lightgrey;
 }
+#datepicker {
+  justify-content: right;
+}
 @media screen and (max-width: 1250px) {
-  input {
-    display: block;
-    margin: 0 auto;
-  }
-  table, .icon-box {
-		margin: 10px auto;
-	} 
-  #back {
-    margin-left: auto;
-  }
+  .input-container, 
+  .table-container, 
+  .icon-container,
   h1 {
-    margin-right: auto;
+    margin-left: 0;
+  }
+  .button-container {
+    margin: 10px 0 0 40px;
   }
 }
 </style>

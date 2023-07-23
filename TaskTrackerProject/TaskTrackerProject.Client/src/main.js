@@ -13,7 +13,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import './assets/main.css'
 import { faMicrosoft } from '@fortawesome/free-brands-svg-icons'
 import primeVue from 'primevue/config';
-import 'primevue/resources/themes/lara-light-blue/theme.css';
+import 'primevue/resources/themes/nano/theme.css';
 
 axios.defaults.baseURL = process.env.NODE_ENV == 'production' ? "/api" : "https://localhost:5001/api";
 
