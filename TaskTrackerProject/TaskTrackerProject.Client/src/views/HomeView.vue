@@ -6,7 +6,7 @@ import SideBar from "../components/SideBar.vue"
   <div class="wrapper">
     <SideBar/>
     <h1>All List</h1>
-    <div class="table-container">
+    <div class="container">
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
@@ -81,7 +81,7 @@ export default {
   overflow-y: auto;
   height: 100vh;
 }
-.table-container {
+.container {
   display: flex;
   justify-content: center; 
   margin-left: 200px;
@@ -114,9 +114,9 @@ tbody:hover {
   background-color: lightgrey;
 }
 @media screen and (max-width: 1250px) {
-  .table-container, 
+  .container, 
   h1 {
-    margin-left: 0;
+    margin-left: auto;
   }
 }
 </style>

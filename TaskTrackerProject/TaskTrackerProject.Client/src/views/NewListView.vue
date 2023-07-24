@@ -8,11 +8,11 @@ import SideBar from "../components/SideBar.vue"
 <template>
   <div class="wrapper" ref="wrapper">
     <SideBar/>
-    <div class="button-container">
+    <div class="container" id="button-container">
       <button id="back" @click="redirectToHome()"> <font-awesome-icon icon="fa-solid fa-caret-left" /> Back </button> 
     </div>
     <h1> {{ list.name }} </h1>
-    <div class="table-container">
+    <div class="container" id="table-container">
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
@@ -32,26 +32,29 @@ import SideBar from "../components/SideBar.vue"
         </tbody>
       </table>
     </div>
-    <div class="icon-container">
+    <div class="container" id="icon-container">
       <div class="icon-box" v-if="showStatusBox">
         <button class="bg-danger" @click="setStatus('Not Finished')"> Not Finished </button>
         <button class="bg-warning" @click="setStatus('In Progress')"> In Progress </button>
         <button class="bg-success" @click="setStatus('Completed')"> Completed </button>
       </div>
     </div>
-    <div class="icon-container">
+    <div class="container" id="icon-container">
       <div class="icon-box" v-if="showPriorityBox">
         <button class="bg-danger"  @click="setPriority('Low')"> Low </button>
         <button class="bg-warning" @click="setPriority('Mid')"> Mid </button>
         <button class="bg-success" @click="setPriority('High')"> High </button>
       </div>
     </div>
-    <div class="icon-container">
+    <div class="container" id="icon-container">
       <div class="icon-box" id="datepicker" v-if="showDateBox"> 
+        <button class="bg-primary" @click="setDate('Today')"> Today </button>
+        <button class="bg-primary" @click="setDate('Tommorow')"> Tommorow </button>
+        <button class="bg-primary" @click="setDate('Next Week')"> Next Week </button>
         <Calendar v-model="this.listModel.taskdate" dateFormat="dd/mm/yy" showIcon showButtonBar/>
       </div>
     </div>
-    <div class="icon-container" id="fa-icon-container">
+    <div class="container" id="fa-icon-container">
       <div class="icon-box" id="fa-icon-box" v-if="this.listModel.task !== ''">
         <font-awesome-icon class="icon" id="icon" icon="fa-solid fa-battery-quarter" @click="toggleStatusBox()" />
         <font-awesome-icon class="icon" icon="fa-solid fa-triangle-exclamation" @click="togglePriorityBox()" /> 
@@ -60,7 +63,7 @@ import SideBar from "../components/SideBar.vue"
         <font-awesome-icon class="icon" icon="fa-solid fa-repeat" /> 
       </div>
     </div>
-    <div class="input-container">
+    <div class="container" id="input-container">
       <input type="text" required placeholder="Add Task" v-model="listModel.task" @keyup.enter=addTask()> 
     </div>
   </div>
@@ -134,6 +137,15 @@ export default {
     toggleDateBox() {
       this.showDateBox = !this.showDateBox;
       this.accessDateBox = true;
+    },
+    setDate(date) {
+      // today is the default value of this.listModel.taskdate
+      const today = new Date();
+      if(date === "Tommorow") 
+      { this.listModel.taskdate.setDate(today.getDate() + 1) }
+      if(date === "Next Week") 
+      { this.listModel.taskdate.setDate(today.getDate() + 7) }
+      this.showDateBox = false;
     }
   },
   watch: {
@@ -155,15 +167,19 @@ h1 {
   margin: 80px 0 10px 200px;
   text-align: center;
 }
-.button-container {
+.container {
   display: flex;
-  justify-content: left; 
+  justify-content: center; 
+}
+#button-container {
   margin-left: 200px;
+  justify-content: left;
 }
 button {
   border-radius: 6px;
   padding: 5px;
   width: 33%;
+  margin-right: 5px;
 }
 #back {
   position: absolute;
@@ -176,9 +192,7 @@ button {
   overflow-y: auto;
   height: 100vh;
 }
-.table-container {
-  display: flex;
-  justify-content: center; 
+#table-container {
   margin: 0 0 10px 200px;
 }
 table {
@@ -199,9 +213,7 @@ tbody {
 tbody:hover {
   background-color: lightgrey;
 }
-.input-container {
-  display: flex;
-  justify-content: center; 
+#input-container {
   margin: 5px 0 10px 200px;
 }
 input {
@@ -212,14 +224,11 @@ input {
 	border: 1px solid black;
 	border-radius: 6px;
 }
-.icon-container {
-  display: flex;
-  justify-content: center; 
-  margin-left: 200px;
-  margin-top: 5px; 
+#icon-container {
+  margin: 5px 0 0 200px;
 }
 #fa-icon-container {
-  margin-top: 10px;
+  margin: 10px 0 0 200px;
 }
 .icon-box {
   display: flex;
@@ -244,13 +253,16 @@ input {
   justify-content: right;
 }
 @media screen and (max-width: 1250px) {
-  .input-container, 
-  .table-container, 
-  .icon-container,
+  #input-container, 
+  #table-container, 
+  #icon-container, 
+  #fa-icon-container, 
+  .container,
   h1 {
-    margin-left: 0;
+    margin-left: auto;
+    margin-right: auto;
   }
-  .button-container {
+  #button-container {
     margin: 10px 0 0 40px;
   }
 }
