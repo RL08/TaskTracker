@@ -19,7 +19,8 @@ import SideBar from "../components/SideBar.vue"
             <th>Task</th>
             <th>Status</th>
             <th>Priority</th>
-            <th>Date</th>
+            <th>Date</th> 
+            <th>Options</th>
           </tr>
         </thead>
         <tbody v-for="task in list.tasks" :key="task.id">
@@ -28,6 +29,11 @@ import SideBar from "../components/SideBar.vue"
             <td> {{ task.status }} </td>
             <td> {{ task.priority }} </td>
             <td> {{ task.date }} </td>
+            <td> 
+              <font-awesome-icon class="icon" icon="fa-solid fa-pen"/> 
+              <font-awesome-icon class="icon" icon="fa-solid fa-trash"/> 
+              <font-awesome-icon class="icon" :class="{ 'active': favorite }" icon="fa-solid fa-star"/> 
+            </td>
           </tr>
         </tbody>
       </table>
@@ -88,6 +94,7 @@ export default {
       showPriorityBox: false,
       showDateBox: false,
       accessDateBox: false,
+      favorite: true,
 		}
 	},
   components: {
@@ -248,6 +255,9 @@ input {
 }
 .icon:hover {
   background-color: lightgrey;
+}
+.icon.active {
+  color: #01939c
 }
 #datepicker {
   justify-content: right;
