@@ -6,14 +6,14 @@ import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
-  <button class="navbar-toggler" id="first-navbar-toggler" :class="{ 'active': showNavbar }" @click="toggleSidebar()">
+  <button class="navbar-toggler" id="first-navbar-toggler" :class="{ 'true': showNavbar }" @click="toggleSidebar()">
     <font-awesome-icon id="bar" icon="fa-bars"/>
   </button>
-  <nav id="sidebar" :class="{ 'active': showSidebar }">
-    <button class="navbar-toggler" :class="{ 'active': showNavbar }" @click="toggleSidebar()">
+  <nav id="sidebar" :class="{ 'true': showSidebar }">
+    <button class="navbar-toggler" :class="{ 'true': showNavbar }" @click="toggleSidebar()">
       <font-awesome-icon id="bar" icon="fa-bars"/>
     </button>
-    <div class="sidebar-header" :class="{ 'active': showSidebar }">
+    <div class="sidebar-header" :class="{ 'true': showSidebar }">
       <div class="authentication-container" v-if="!authenticated">
         <router-link to="/signin" class="nav-link" >
           <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign in
@@ -44,7 +44,7 @@ import 'vue3-toastify/dist/index.css';
           <font-awesome-icon class="icon" icon="fa-plus"/> 
           <button class="btn" @click="addDefaultLists">Add 10 Lists </button>
         </div>
-        <li id="list-name" class="nav-link" :class="{ 'active': showInput }">
+        <li id="list-name" class="nav-link" :class="{ 'true': showInput }">
           <font-awesome-icon class="icon" icon="fa-plus"/> 
           <input type="text" placeholder="new list" id="list-input" v-model="loginModel.listname" @keyup.enter="addlist()">
         </li>
@@ -199,7 +199,7 @@ export default {
 #list-name {
   display: none;
 }
-#list-name.active {
+#list-name.true {
   display: flex;
 }
 #list-input {
@@ -238,14 +238,14 @@ export default {
     display: none;
   }
 }
-.sidebar-header.active {
+.sidebar-header.true {
   display: block;
 }
-#sidebar.active {
+#sidebar.true {
   background-color: white;
   display: block;
 }
-#first-navbar-toggler.active {
+#first-navbar-toggler.true {
   display: none;
 }
 </style>

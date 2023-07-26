@@ -16,23 +16,59 @@ import SideBar from "../components/SideBar.vue"
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
-            <th>Task</th>
-            <th>Status</th>
-            <th>Priority</th>
-            <th>Date</th> 
-            <th>Options</th>
+            <th>
+              Task
+              <font-awesome-icon v-if="edit" class="icon pen" icon="fa-solid fa-pen" @click="enableEditName()"/>
+            </th>
+            <th>
+              Status
+              <font-awesome-icon v-if="edit" class="icon pen" icon="fa-solid fa-pen" @click="enableEditStatus()"/>
+            </th>
+            <th>
+              Priority
+              <font-awesome-icon v-if="edit" class="icon pen" icon="fa-solid fa-pen"/>
+            </th>
+            <th>
+              Date
+              <font-awesome-icon v-if="edit" class="icon pen" icon="fa-solid fa-pen"/>
+            </th> 
+            <th>
+              Options
+            </th>
           </tr>
         </thead>
         <tbody v-for="task in list.tasks" :key="task.id">
           <tr>
-            <td> {{ task.name }} </td>
-            <td> {{ task.status }} </td>
-            <td> {{ task.priority }} </td>
-            <td> {{ task.date }} </td>
+            <td :class="{ 'true': editName }"> 
+              <input type="text" id="option-input" :placeholder="task.name" v-if="!editName" disabled/> 
+              <input type="text" id="option-input" :placeholder="task.name" v-if="editName" v-model="task.name" @keyup.enter="enableEditName()">
+            </td>
+            <td :class="{ 'true': editStatus }"> 
+              <select v-if="!editStatus" class="option-select" disabled>
+                <option class="option-option"> {{ task.status }} </option>
+              </select>
+              <select v-if="editStatus" class="option-select">
+                <option class="option-option"> Not Finished </option>
+                <option class="option-option"> In Progress </option>
+                <option class="option-option"> Completed </option>
+              </select>
+            </td>
             <td> 
-              <font-awesome-icon class="icon" icon="fa-solid fa-pen"/> 
-              <font-awesome-icon class="icon" icon="fa-solid fa-trash"/> 
-              <font-awesome-icon class="icon" :class="{ 'active': favorite }" icon="fa-solid fa-star"/> 
+              
+                <p> {{ task.priority }} </p>
+
+            </td>
+            <td> 
+              
+                <p> {{ task.date }} </p>
+
+            </td>
+            <td> 
+              <p>
+                <font-awesome-icon class="icon" icon="fa-solid fa-pen" @click="showEdit()"/> 
+                <font-awesome-icon class="icon" icon="fa-solid fa-trash"/> 
+                <font-awesome-icon class="icon" :class="{ 'true': favorite }" icon="fa-solid fa-star"/> 
+              </p>
             </td>
           </tr>
         </tbody>
@@ -40,7 +76,7 @@ import SideBar from "../components/SideBar.vue"
     </div>
     <div class="container" id="icon-container">
       <div class="icon-box" v-if="showStatusBox">
-        <button class="bg-danger" @click="setStatus('Not Finished')"> Not Finished </button>
+        <button class="bg-danger"  @click="setStatus('Not Finished')"> Not Finished </button>
         <button class="bg-warning" @click="setStatus('In Progress')"> In Progress </button>
         <button class="bg-success" @click="setStatus('Completed')"> Completed </button>
       </div>
@@ -94,6 +130,9 @@ export default {
       showPriorityBox: false,
       showDateBox: false,
       accessDateBox: false,
+      edit: false,
+      editName: false,
+      editStatus: false,
       favorite: true,
 		}
 	},
@@ -153,6 +192,15 @@ export default {
       if(date === "Next Week") 
       { this.listModel.taskdate.setDate(today.getDate() + 7) }
       this.showDateBox = false;
+    },
+    showEdit() {
+      this.edit = !this.edit;
+    },
+    enableEditName() {
+      this.editName = !this.editName;
+    },
+    enableEditStatus() {
+      this.editStatus = !this.editStatus;
     }
   },
   watch: {
@@ -214,10 +262,17 @@ th, td {
   width: 100vh;
   text-align: center;
 }
+th {
+  position: relative;
+}
+p {
+  margin: 0;
+  padding: 5px 10px;
+}
 tbody {
   cursor: pointer;
 }
-tbody:hover {
+th:hover, td.true:hover {
   background-color: lightgrey;
 }
 #input-container {
@@ -230,6 +285,19 @@ input {
 	padding: 5px 10px;
 	border: 1px solid black;
 	border-radius: 6px;
+}
+input::placeholder {
+  color: black;
+}
+#option-input::placeholder {
+  text-align: center;
+}
+#option-input {
+  width: 100%;
+  border: 0;
+  background: #f3f3f3;
+  margin: 0;
+  padding: 5px 10px;
 }
 #icon-container {
   margin: 5px 0 0 200px;
@@ -256,11 +324,22 @@ input {
 .icon:hover {
   background-color: lightgrey;
 }
-.icon.active {
+.icon.true {
   color: #01939c
 }
 #datepicker {
   justify-content: right;
+}
+.pen {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+select {
+  width: 100%;
+  padding: 5px 10px;
 }
 @media screen and (max-width: 1250px) {
   #input-container, 
