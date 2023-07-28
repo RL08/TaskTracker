@@ -12,13 +12,15 @@ export default createStore({
           name: "GetStarted",
           path: "/list",
           currentListId: null,
+          currentTaskId: null,
           tasks: [{
-            id: "1",
+            id: "0",
             name: "Run 10 km",
             status : "Not Finished",
             priority: "Low",
             date: "∞",
-          }],          
+          }],
+          favoriteTasks: [],           
         }],
       }
     }
@@ -40,7 +42,13 @@ export default createStore({
     },
     addTask(state, task) {
       state.user.lists[state.user.currentListId].tasks.push(task);
-    },    
+    }, 
+    addFavoriteTask(state, task) {
+      state.user.lists[state.user.currentListId].favoriteTasks.push(task);
+    },       
+    deleteFavoriteTask(state, task) {
+      state.user.lists[state.user.currentListId].favoriteTasks = state.user.lists[state.user.currentListId].favoriteTasks.filter(favoritetask => favoritetask.id !== task.id);
+    },   
     setCurrentListId(state, listId) {
       state.user.currentListId = listId;
     },    

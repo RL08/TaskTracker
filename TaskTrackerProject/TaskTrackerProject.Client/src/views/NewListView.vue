@@ -13,62 +13,26 @@ import SideBar from "../components/SideBar.vue"
     </div>
     <h1> {{ list.name }} </h1>
     <div class="container" id="table-container">
-      <table class="table table-striped table-bordered">
+      <table class="table table-bordered">
         <thead>
           <tr>
-            <th>
-              Task
-              <font-awesome-icon v-if="edit" class="icon pen" icon="fa-solid fa-pen" @click="enableEditName()"/>
-            </th>
-            <th>
-              Status
-              <font-awesome-icon v-if="edit" class="icon pen" icon="fa-solid fa-pen" @click="enableEditStatus()"/>
-            </th>
-            <th>
-              Priority
-              <font-awesome-icon v-if="edit" class="icon pen" icon="fa-solid fa-pen"/>
-            </th>
-            <th>
-              Date
-              <font-awesome-icon v-if="edit" class="icon pen" icon="fa-solid fa-pen"/>
-            </th> 
-            <th>
-              Options
-            </th>
+            <th> Task </th>
+            <th> Status </th>
+            <th> Priority </th>
+            <th> Date </th> 
+            <th> Options </th>
           </tr>
         </thead>
         <tbody v-for="task in list.tasks" :key="task.id">
           <tr>
-            <td :class="{ 'true': editName }"> 
-              <input type="text" id="option-input" :placeholder="task.name" v-if="!editName" disabled/> 
-              <input type="text" id="option-input" :placeholder="task.name" v-if="editName" v-model="task.name" @keyup.enter="enableEditName()">
-            </td>
-            <td :class="{ 'true': editStatus }"> 
-              <select v-if="!editStatus" class="option-select" disabled>
-                <option class="option-option"> {{ task.status }} </option>
-              </select>
-              <select v-if="editStatus" class="option-select">
-                <option class="option-option"> Not Finished </option>
-                <option class="option-option"> In Progress </option>
-                <option class="option-option"> Completed </option>
-              </select>
-            </td>
+            <td @click="enableEditName(task.id)"> {{ task.name }} </td>
+            <td @click="enableEditStatus(task.id)"> {{ task.status }} </td>
+            <td @click="enableEditPriority(task.id)"> {{ task.priority }} </td>
+            <td @click="enableEditDate(task.id)"> {{ task.date }} </td>
             <td> 
-              
-                <p> {{ task.priority }} </p>
-
-            </td>
-            <td> 
-              
-                <p> {{ task.date }} </p>
-
-            </td>
-            <td> 
-              <p>
-                <font-awesome-icon class="icon" icon="fa-solid fa-pen" @click="showEdit()"/> 
-                <font-awesome-icon class="icon" icon="fa-solid fa-trash"/> 
-                <font-awesome-icon class="icon" :class="{ 'true': favorite }" icon="fa-solid fa-star"/> 
-              </p>
+              <font-awesome-icon class="icon" :class="{ 'true': edit }" icon="fa-solid fa-pen" @click="enableEdit()"/> 
+              <font-awesome-icon class="icon" :class="{ 'true': deleteTask }" icon="fa-solid fa-trash"/> 
+              <font-awesome-icon class="icon" :class="{ 'true': isTaskFavorite(task.id) }" icon="fa-solid fa-star" @click="addFavoriteTask(task.id, task)"/> 
             </td>
           </tr>
         </tbody>
@@ -84,7 +48,7 @@ import SideBar from "../components/SideBar.vue"
     <div class="container" id="icon-container">
       <div class="icon-box" v-if="showPriorityBox">
         <button class="bg-danger"  @click="setPriority('Low')"> Low </button>
-        <button class="bg-warning" @click="setPriority('Mid')"> Mid </button>
+        <button class="bg-warning" @click="setPriority('Medium')"> Medium </button>
         <button class="bg-success" @click="setPriority('High')"> High </button>
       </div>
     </div>
@@ -93,10 +57,10 @@ import SideBar from "../components/SideBar.vue"
         <button class="bg-primary" @click="setDate('Today')"> Today </button>
         <button class="bg-primary" @click="setDate('Tommorow')"> Tommorow </button>
         <button class="bg-primary" @click="setDate('Next Week')"> Next Week </button>
-        <Calendar v-model="this.listModel.taskdate" dateFormat="dd/mm/yy" showIcon showButtonBar/>
+        <Calendar v-model="this.listModel.taskdate" dateFormat="dd/mm/yy" showIcon/>
       </div>
     </div>
-    <div class="container" id="fa-icon-container">
+    <div class="container" id="fa-icon-container" v-if="!this.editName">
       <div class="icon-box" id="fa-icon-box" v-if="this.listModel.task !== ''">
         <font-awesome-icon class="icon" id="icon" icon="fa-solid fa-battery-quarter" @click="toggleStatusBox()" />
         <font-awesome-icon class="icon" icon="fa-solid fa-triangle-exclamation" @click="togglePriorityBox()" /> 
@@ -105,8 +69,11 @@ import SideBar from "../components/SideBar.vue"
         <font-awesome-icon class="icon" icon="fa-solid fa-repeat" /> 
       </div>
     </div>
-    <div class="container" id="input-container">
+    <div class="container" id="input-container" v-if="!editName">
       <input type="text" required placeholder="Add Task" v-model="listModel.task" @keyup.enter=addTask()> 
+    </div>
+    <div class="container" id="input-container" v-if="editName">
+      <input id="rename" type="text" required placeholder="Rename Task" v-model="listModel.task" @keyup.enter=renameTask()> 
     </div>
   </div>
 </template>
@@ -133,7 +100,10 @@ export default {
       edit: false,
       editName: false,
       editStatus: false,
-      favorite: true,
+      editPriority: false,
+      editDate: false,
+      deleteTask: false,
+      favorite: false,
 		}
 	},
   components: {
@@ -159,6 +129,11 @@ export default {
       toast.success("Task added", { autoClose: 1000, });
       }
     },
+    renameTask() {
+      this.list.tasks[this.list.currentTaskId].name = this.listModel.task;
+      this.listModel.task = ""; 
+      this.editName = false;
+    },
     scrollToBottom() {
       const wrapper = this.$refs.wrapper;
       wrapper.scrollTop = wrapper.scrollHeight;
@@ -171,6 +146,10 @@ export default {
     },
     setStatus(status) {
       this.listModel.taskstatus = status;
+      if(this.editStatus) {
+        this.list.tasks[this.list.currentTaskId].status = this.listModel.taskstatus; 
+        this.editStatus = false;
+      }
       this.showStatusBox = false; 
     },
     togglePriorityBox() {
@@ -178,6 +157,10 @@ export default {
     },
     setPriority(priority) {
       this.listModel.taskpriority = priority;
+      if(this.editPriority) {
+        this.list.tasks[this.list.currentTaskId].priority = this.listModel.taskpriority; 
+        this.editPriority = false;
+      }
       this.showPriorityBox = false; 
     },
     toggleDateBox() {
@@ -185,28 +168,80 @@ export default {
       this.accessDateBox = true;
     },
     setDate(date) {
-      // today is the default value of this.listModel.taskdate
       const today = new Date();
-      if(date === "Tommorow") 
-      { this.listModel.taskdate.setDate(today.getDate() + 1) }
-      if(date === "Next Week") 
-      { this.listModel.taskdate.setDate(today.getDate() + 7) }
+      if(date === "Today") { this.listModel.taskdate.setDate(today.getDate()) }
+      if(date === "Tommorow") { this.listModel.taskdate.setDate(today.getDate() + 1) }
+      if(date === "Next Week") { this.listModel.taskdate.setDate(today.getDate() + 7) }
+      if(this.editDate) {
+        this.list.tasks[this.list.currentTaskId].date = this.listModel.taskdate.toDateString(); 
+        this.editDate = false;
+      }
       this.showDateBox = false;
     },
-    showEdit() {
-      this.edit = !this.edit;
+    enableEdit() {
+      this.edit = !this.edit; 
     },
-    enableEditName() {
-      this.editName = !this.editName;
+    enableEditName(id) {
+      if(this.edit) {
+        this.list.currentTaskId = id;
+        this.editName = true;
+      }
     },
-    enableEditStatus() {
-      this.editStatus = !this.editStatus;
+    enableEditStatus(id) {
+      if(this.edit) {
+        this.list.currentTaskId = id;
+        this.editStatus = true;
+        this.showStatusBox = true;
+      }
+    },
+    enableEditPriority(id) {
+      if(this.edit) {
+        this.list.currentTaskId = id;
+        this.editPriority = true;
+        this.showPriorityBox = true;
+      }
+    },
+    enableEditDate(id) {
+      if(this.edit) { 
+        this.list.currentTaskId = id;
+        this.editDate = true;
+        this.showDateBox = true;
+      }
+    },
+    addFavoriteTask(id, task) {
+      const favoriteTask = {
+        id: id,
+        name: task.name,
+        status: task.status,
+        priority: task.priority,
+        date: task.date, 
+      };
+      if(!this.favorite) {
+        this.$store.commit("addFavoriteTask", favoriteTask);
+        this.favorite = true;
+        toast.info("Favorite Task marked", { autoClose: 1000, });
+      }
+      else {
+        this.$store.commit("deleteFavoriteTask", favoriteTask);
+        this.favorite = false;
+        toast.info("Favorite Task unmarked", { autoClose: 1000, });
+      }
+    },
+    isTaskFavorite(id) {
+      for (const task of  this.list.favoriteTasks) {
+        if(task.id === id) { return true}
+      }
+      console.log(this.list.favoriteTasks);
     }
   },
   watch: {
     'listModel.taskdate': { 
       handler () {
         this.showDateBox = !this.showDateBox;
+        if(this.edit) {
+          this.list.tasks[this.list.currentTaskId].date = this.listModel.taskdate.toDateString(); 
+          this.editDate = false;
+        }
       },
     },
   },
@@ -218,7 +253,7 @@ export default {
 
 <style scoped>
 h1 {
-  color: white;
+  color: black;
   margin: 80px 0 10px 200px;
   text-align: center;
 }
@@ -239,9 +274,13 @@ button {
 #back {
   position: absolute;
   border-radius: 6px;
+  background-color: white;
   margin: 20px;
   padding: 5px;
   width: 100px;
+}
+#back:hover {
+  background-color: lightgrey;
 }
 .wrapper {
   overflow-y: auto;
@@ -262,17 +301,13 @@ th, td {
   width: 100vh;
   text-align: center;
 }
-th {
-  position: relative;
-}
-p {
-  margin: 0;
-  padding: 5px 10px;
+thead {
+  background-color: turquoise;
 }
 tbody {
   cursor: pointer;
 }
-th:hover, td.true:hover {
+td:hover {
   background-color: lightgrey;
 }
 #input-container {
@@ -283,21 +318,15 @@ input {
   justify-content: center;
 	width: 70vw;
 	padding: 5px 10px;
-	border: 1px solid black;
+	border: 5px solid turquoise;
 	border-radius: 6px;
 }
 input::placeholder {
   color: black;
 }
-#option-input::placeholder {
-  text-align: center;
-}
-#option-input {
-  width: 100%;
-  border: 0;
-  background: #f3f3f3;
-  margin: 0;
-  padding: 5px 10px;
+#rename {
+  border: 5px solid grey;
+  margin-top: 10px;
 }
 #icon-container {
   margin: 5px 0 0 200px;
@@ -325,21 +354,10 @@ input::placeholder {
   background-color: lightgrey;
 }
 .icon.true {
-  color: #01939c
+  color: turquoise;
 }
 #datepicker {
   justify-content: right;
-}
-.pen {
-  position: absolute;
-  top: 50%;
-  right: 5px;
-  transform: translateY(-50%);
-  cursor: pointer;
-}
-select {
-  width: 100%;
-  padding: 5px 10px;
 }
 @media screen and (max-width: 1250px) {
   #input-container, 

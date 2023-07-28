@@ -168,7 +168,7 @@ export default {
   width: 100%;
 }
 .nav-link:hover, .navbar-brand:hover, #bar:hover {
-  background-color: lightgrey;
+  background-color: turquoise;
 }
 .form-inline {
   padding: 10px;

@@ -7,7 +7,7 @@ import SideBar from "../components/SideBar.vue"
     <SideBar/>
     <h1>All List</h1>
     <div class="container">
-      <table class="table table-striped table-bordered">
+      <table class="table table-bordered">
         <thead>
           <tr>
             <th>List</th>
@@ -62,8 +62,8 @@ export default {
       else if (list.tasks.some((task) => task.priority === "Low")) {
         return "Low";
       }
-      else if (list.tasks.some((task) => task.status === "Mid")) {
-        return "Mid";
+      else if (list.tasks.some((task) => task.priority === "Medium")) {
+        return "Medium";
       }
       else { 
         return "High";
@@ -87,7 +87,7 @@ export default {
   margin-left: 200px;
 }
 h1 {
-  color: white;
+  color: black;
   margin: 80px 0 10px 200px;
   text-align: center;
 }
@@ -102,6 +102,12 @@ table, th, td {
 th, td {
   width: 100vh;
   text-align: center;
+}
+thead {
+  background-color: turquoise;
+}
+tbody {
+  cursor: pointer;
 }
 progress {
   width: 100%;

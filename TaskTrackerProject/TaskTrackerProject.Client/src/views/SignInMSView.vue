@@ -90,16 +90,17 @@ export default {
 }
 .tab-group {
 	list-style: none;
+  padding: 0;
 }
 .tab-link {
   border-radius: 15px;
 	text-decoration: none;
 	background: lightgray;
 	color: white;
-	width: 45%;
+	width: 49%;
 	float: left;
 	text-align: center;
-	margin: 0 10px 0 10px;
+	margin: 0 2px 0 2px;
 	padding: 15px;
 }
 .tab-group:after {
@@ -108,11 +109,11 @@ export default {
 	clear: both;
 }
 .tab-link:hover, .button:hover{
-	background: #01939c;
+	background: turquoise;
 	color: #fff;
 }
 .tab-group .active a {
-	background: #01939c;
+	background: turquoise;
 	color: #fff;
 }
 h1 {
@@ -123,7 +124,7 @@ h1 {
 input, textarea {
 	width: 100%;
 	padding: 5px 10px;
-	border: 1px solid #01939c;
+	border: 2px solid turquoise;
 	color: black;
 	border-radius: 6px;
 }
@@ -150,7 +151,7 @@ input, textarea {
 	border-radius: 15px;
 	padding: 15px 0;
 	letter-spacing: 0.1em;
-	background: #01939c;
+	background: turquoise;
 	color: #fff;
 	width: 100%;
 }
