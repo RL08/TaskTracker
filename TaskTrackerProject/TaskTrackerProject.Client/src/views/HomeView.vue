@@ -119,10 +119,23 @@ tbody {
 tbody:hover {
   background-color: lightgrey;
 }
-@media screen and (max-width: 1250px) {
+@media screen and (max-width: 280px) {  
+  .wrapper {
+    font-size: 11px;
+  }
+}
+@media screen and (min-height: 1024px) {  
+  .wrapper {
+    font-size: 24px;
+  }
+}
+@media screen and (max-width: 1024px) {
   .container, 
   h1 {
     margin-left: auto;
+  }
+  table {
+    width: 100vw;
   }
 }
 </style>

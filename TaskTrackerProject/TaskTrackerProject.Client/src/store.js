@@ -19,6 +19,7 @@ export default createStore({
             status : "Not Finished",
             priority: "Low",
             date: "∞",
+            favorite: false,
           }],
           favoriteTasks: [],           
         }],
@@ -38,6 +39,7 @@ export default createStore({
     },
     addList(state, list) {
       list.tasks = [];
+      list.favoriteTasks = [];
       state.user.lists.push(list);
     },
     addTask(state, task) {

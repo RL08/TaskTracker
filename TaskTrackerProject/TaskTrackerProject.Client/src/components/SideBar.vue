@@ -40,9 +40,8 @@ import 'vue3-toastify/dist/index.css';
         <li class="nav-link" @click="showinputfield()">
           <font-awesome-icon class="icon" icon="fa-plus"/> New List
         </li>
-        <div class="nav-link" v-if="isDevelopment">
-          <font-awesome-icon class="icon" icon="fa-plus"/> 
-          <button class="btn" @click="addDefaultLists">Add 10 Lists </button>
+        <div class="nav-link" v-if="isDevelopment" @click="addDefaultLists()">
+          <font-awesome-icon class="icon" icon="fa-plus"/> Add 10 Lists
         </div>
         <li id="list-name" class="nav-link" :class="{ 'true': showInput }">
           <font-awesome-icon class="icon" icon="fa-plus"/> 
@@ -206,9 +205,6 @@ export default {
   width: 100%;
   padding: 5px 10px;
 }
-.btn {
-  padding: 0;
-}
 /** responsive */
 #first-navbar-toggler {
   display: none;
@@ -217,7 +213,7 @@ export default {
   margin: 30px 0 0 10px;
   display: none;
 }
-@media screen and (max-width: 1250px) {
+@media screen and (max-width: 1024px) {
   #first-navbar-toggler {
     display: block;
     position: absolute;

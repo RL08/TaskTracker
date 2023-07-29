@@ -32,7 +32,7 @@ import SideBar from "../components/SideBar.vue"
             <td> 
               <font-awesome-icon class="icon" :class="{ 'true': edit }" icon="fa-solid fa-pen" @click="enableEdit()"/> 
               <font-awesome-icon class="icon" :class="{ 'true': deleteTask }" icon="fa-solid fa-trash"/> 
-              <font-awesome-icon class="icon" :class="{ 'true': isTaskFavorite(task.id) }" icon="fa-solid fa-star" @click="addFavoriteTask(task.id, task)"/> 
+              <font-awesome-icon class="icon" :class="{ 'true': isTaskFavorite(task) }" icon="fa-solid fa-star" @click="addFavoriteTask(task.id, task)"/> 
             </td>
           </tr>
         </tbody>
@@ -122,6 +122,7 @@ export default {
          * if accessDateBox is false -> ∞ 
          */
         date: this.accessDateBox ? this.listModel.taskdate.toDateString() : "∞", 
+        favorite: false,
       };
       this.accessDateBox = false;
       this.$store.commit("addTask", newTask);
@@ -134,10 +135,10 @@ export default {
       this.listModel.task = ""; 
       this.editName = false;
     },
-    scrollToBottom() {
-      const wrapper = this.$refs.wrapper;
-      wrapper.scrollTop = wrapper.scrollHeight;
-    },
+    // scrollToBottom() {
+    //   const wrapper = this.$refs.wrapper;
+    //   wrapper.scrollTop = wrapper.scrollHeight;
+    // },
     redirectToHome() {
       this.$router.push("/");
     },
@@ -215,23 +216,22 @@ export default {
         status: task.status,
         priority: task.priority,
         date: task.date, 
+        favorite: task.favorite,
       };
-      if(!this.favorite) {
+      if(!task.favorite) {
         this.$store.commit("addFavoriteTask", favoriteTask);
-        this.favorite = true;
+        task.favorite = true;
         toast.info("Favorite Task marked", { autoClose: 1000, });
       }
       else {
         this.$store.commit("deleteFavoriteTask", favoriteTask);
-        this.favorite = false;
+        task.favorite = false;
         toast.info("Favorite Task unmarked", { autoClose: 1000, });
       }
+      // console.log(this.list.favoriteTasks);
     },
-    isTaskFavorite(id) {
-      for (const task of  this.list.favoriteTasks) {
-        if(task.id === id) { return true}
-      }
-      console.log(this.list.favoriteTasks);
+    isTaskFavorite(task) {
+      return this.list.favoriteTasks.some((favoriteTask) => favoriteTask.id === task.id);
     }
   },
   watch: {
@@ -245,9 +245,10 @@ export default {
       },
     },
   },
-  updated() {
-    this.scrollToBottom();
-  }
+  // user view will be at the bottom when he click
+  // updated() {
+  //   this.scrollToBottom();
+  // }
 }
 </script>
 
@@ -359,7 +360,17 @@ input::placeholder {
 #datepicker {
   justify-content: right;
 }
-@media screen and (max-width: 1250px) {
+@media screen and (max-width: 280px) {  
+  .wrapper {
+    font-size: 11px;
+  }
+}
+@media screen and (min-height: 1024px) {  
+  .wrapper {
+    font-size: 24px;
+  }
+}
+@media screen and (max-width: 1024px) {
   #input-container, 
   #table-container, 
   #icon-container, 
@@ -371,6 +382,9 @@ input::placeholder {
   }
   #button-container {
     margin: 10px 0 0 40px;
+  }
+  input, table, .icon-box {
+    width: 100vw;
   }
 }
 </style>
