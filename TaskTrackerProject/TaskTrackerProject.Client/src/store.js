@@ -45,11 +45,16 @@ export default createStore({
     addTask(state, task) {
       state.user.lists[state.user.currentListId].tasks.push(task);
     }, 
+    deleteTask(state, task) {
+      state.user.lists[state.user.currentListId].tasks = state.user.lists[state.user.currentListId].tasks.filter(
+        currenttask => currenttask.id !== task.id);
+    }, 
     addFavoriteTask(state, task) {
       state.user.lists[state.user.currentListId].favoriteTasks.push(task);
     },       
     deleteFavoriteTask(state, task) {
-      state.user.lists[state.user.currentListId].favoriteTasks = state.user.lists[state.user.currentListId].favoriteTasks.filter(favoritetask => favoritetask.id !== task.id);
+      state.user.lists[state.user.currentListId].favoriteTasks = state.user.lists[state.user.currentListId].favoriteTasks.filter(
+        favoritetask => favoritetask.id !== task.id);
     },   
     setCurrentListId(state, listId) {
       state.user.currentListId = listId;

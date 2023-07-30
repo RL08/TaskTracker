@@ -14,6 +14,7 @@ import './assets/main.css'
 import { faMicrosoft } from '@fortawesome/free-brands-svg-icons'
 import primeVue from 'primevue/config';
 import 'primevue/resources/themes/nano/theme.css';
+import ConfirmationService from 'primevue/confirmationservice';
 
 axios.defaults.baseURL = process.env.NODE_ENV == 'production' ? "/api" : "https://localhost:5001/api";
 
@@ -21,6 +22,7 @@ const app = createApp(App)
 app.use(router)
 app.use(store)
 app.use(primeVue)
+app.use(ConfirmationService)
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.mount('#app')
 

@@ -31,8 +31,8 @@ import SideBar from "../components/SideBar.vue"
             <td @click="enableEditDate(task.id)"> {{ task.date }} </td>
             <td> 
               <font-awesome-icon class="icon" :class="{ 'true': edit }" icon="fa-solid fa-pen" @click="enableEdit()"/> 
-              <font-awesome-icon class="icon" :class="{ 'true': deleteTask }" icon="fa-solid fa-trash"/> 
-              <font-awesome-icon class="icon" :class="{ 'true': isTaskFavorite(task) }" icon="fa-solid fa-star" @click="addFavoriteTask(task.id, task)"/> 
+              <font-awesome-icon class="icon" icon="fa-solid fa-trash" @click="deleteTask(task)"/> 
+              <font-awesome-icon class="icon" :class="{ 'true': isTaskFavorite(task) }" icon="fa-solid fa-star" @click="addFavoriteTask(task)"/> 
             </td>
           </tr>
         </tbody>
@@ -95,14 +95,13 @@ export default {
 			},
       showStatusBox: false,
       showPriorityBox: false,
-      showDateBox: false,
+      showDateBox: false, 
       accessDateBox: false,
       edit: false,
       editName: false,
       editStatus: false,
       editPriority: false,
       editDate: false,
-      deleteTask: false,
       favorite: false,
 		}
 	},
@@ -112,23 +111,35 @@ export default {
   methods: {
     addTask() {
       if(this.listModel.task !== "") {
-        const newTask = {
-        id: this.list.tasks.length,
-        name: this.listModel.task,
-        status: this.listModel.taskstatus,
-        priority: this.listModel.taskpriority,
         /**
          * if accessDateBox is true -> this.listModel.taskdate.toDateString()
          * if accessDateBox is false -> ∞ 
          */
-        date: this.accessDateBox ? this.listModel.taskdate.toDateString() : "∞", 
-        favorite: false,
-      };
-      this.accessDateBox = false;
-      this.$store.commit("addTask", newTask);
-      this.listModel.task = ""; 
-      toast.success("Task added", { autoClose: 1000, });
+        const newTask = {
+          id: this.list.tasks.length,
+          name: this.listModel.task,
+          status: this.listModel.taskstatus,
+          priority: this.listModel.taskpriority,
+          date: this.accessDateBox ? this.listModel.taskdate.toDateString() : "∞", 
+          favorite: false,
+        };
+        this.accessDateBox = false;
+        this.$store.commit("addTask", newTask);
+        this.listModel.task = ""; 
+        toast.success("Task added", { autoClose: 1000, });
       }
+    },
+    deleteTask(task) {
+      const currentTask = {
+        id: task.id,
+        name: task.name,
+        status: task.status,
+        priority: task.priority,
+        date: task.date,
+        favorite: task.favorite,
+      };
+      this.$store.commit("deleteTask", currentTask);
+      toast.info("Task deleted", { autoClose: 1000 });
     },
     renameTask() {
       this.list.tasks[this.list.currentTaskId].name = this.listModel.task;
@@ -209,9 +220,9 @@ export default {
         this.showDateBox = true;
       }
     },
-    addFavoriteTask(id, task) {
+    addFavoriteTask(task) {
       const favoriteTask = {
-        id: id,
+        id: task.id,
         name: task.name,
         status: task.status,
         priority: task.priority,
