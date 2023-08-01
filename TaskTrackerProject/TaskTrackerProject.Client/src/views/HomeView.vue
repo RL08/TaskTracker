@@ -129,7 +129,7 @@ tbody:hover {
     font-size: 24px;
   }
 }
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1000px) {
   .container, 
   h1 {
     margin-left: auto;

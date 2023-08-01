@@ -381,7 +381,7 @@ input::placeholder {
     font-size: 24px;
   }
 }
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1000px) {
   #input-container, 
   #table-container, 
   #icon-container, 

@@ -31,7 +31,7 @@ import SideBar from "../components/SideBar.vue"
 					<div class="form-group">
             <input type="email" required placeholder="Email Address" v-model="loginModel.email"/>
           </div>
-          <div class="form-group">
+          <div class="form-group" id="bottom">
             <input type="password" required placeholder="Password" v-model="loginModel.password"/>
           </div>
 					<div class="form-group-icon">
@@ -90,33 +90,39 @@ export default {
   display: flex;
 }
 .form {
+	display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 	background: white;
 	padding: 40px;
-	margin: 40px 40px 40px 340px;
+	margin: 40px 40px 40px 240px;
 	border-radius: 15px;
 	box-shadow: 0 4px 10px 4px rgba(19, 35, 47, .3);
 	font-size: 17px;
-  flex-grow: 1;
+	width: 100vw;
+
 }
 .tab-group {
 	list-style: none;
   padding: 0;
+	display: flex;
+	justify-content: center;
 }
 .tab-link {
-  border-radius: 15px;
+	display: flex;
+	align-items: center;
 	text-decoration: none;
+	border-radius: 15px;
 	background: lightgray;
 	color: white;
-	width: 49%;
-	float: left;
-	text-align: center;
-	margin: 0 2px 0 2px;
+	margin: 0 2px;
 	padding: 15px;
 }
-.tab-group:after {
-	content: "";
-	display: table;
-	clear: both;
+li {
+	width: 100%;
+}
+.icon {
+  margin-right: 20px;
 }
 .tab-link:hover, .button:hover{
 	background: turquoise;
@@ -128,33 +134,26 @@ export default {
 }
 h1 {
 	text-align: center;
-	margin-bottom: 40px;
 	font-weight: lighter;
+	margin-bottom: 10px;
 }
 input, textarea {
 	width: 100%;
+	height: 5vh;
 	padding: 5px 10px;
 	border: 2px solid turquoise;
 	color: black;
 	border-radius: 6px;
 }
 .form-group {
-	margin-bottom: 40px;
+	margin: 5vh 0;
 }
 .form-group-icon {
-	margin-bottom: 40px;
-	font-size: 35px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-}
-.top-row > div {
-	float: left;
-	width: 48%;
-	margin-right: 4%;
-}
-.top-row > div:last-child {
-	margin: 0;
+	font-size: 35px;
+	margin-bottom: 20px;
 }
 .button {
 	border: 0;
@@ -168,15 +167,44 @@ input, textarea {
 #ms {
 	color: turquoise;
 }
-@media screen and (max-width: 1200px) {
-  .form {
-		margin: 60px 20px auto;
+@media screen and (max-width: 280px) {  
+	.tab-link {
+		font-size: 10px;
+	}
+	.icon {
+		display: none;
 	}
 }
-@media screen and (max-height: 700px) {
-  .form {
-		height: 450px;
-		overflow-y: auto;
+@media screen and (max-width: 415px) {  
+  .wrapper {
+    font-size: 14px;
+  }
+	.form {
+    font-size: 14px;
+  }
+	.tab-link {
+		font-size: 14px;
 	}
 }
+@media screen and (max-width: 1000px) {
+  .form {
+		margin: 15vh 10px;
+	}
+}
+@media screen and (min-height: 740px) {  
+	.wrapper, .form, .tab-link {
+    font-size: 17px;
+  }
+	h1, .form-group-icon {
+		font-size: 40px;
+	} 
+}
+@media screen and (min-height: 1024px) {  
+	.wrapper, .form, .tab-link {
+    font-size: 28px;
+  }
+	h1, .form-group-icon {
+		font-size: 70px;
+	} 
+}	
 </style>

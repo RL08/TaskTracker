@@ -40,10 +40,10 @@ import 'vue3-toastify/dist/index.css';
         <li class="nav-link" @click="showinputfield()">
           <font-awesome-icon class="icon" icon="fa-plus"/> New List
         </li>
-        <div class="nav-link" v-if="isDevelopment" @click="addDefaultLists()">
+        <li class="nav-link" v-if="isDevelopment" @click="addDefaultLists()">
           <font-awesome-icon class="icon" icon="fa-plus"/> Add 10 Lists
-        </div>
-        <li id="list-name" class="nav-link" :class="{ 'true': showInput }">
+        </li>
+        <li id="list-name" class="nav-link" :class="{ 'true': showInput }" >
           <font-awesome-icon class="icon" icon="fa-plus"/> 
           <input type="text" placeholder="new list" id="list-input" v-model="loginModel.listname" @keyup.enter="addlist()">
         </li>
@@ -101,6 +101,7 @@ export default {
       this.showInput = !this.showInput; 
     },
     redirectTo(path, listId) {
+      this.toggleSidebar();
       this.$store.commit('setCurrentListId', listId);
       this.$router.push(path);
     },
@@ -173,6 +174,11 @@ export default {
   padding: 10px;
   margin-bottom: 10px;
 }
+input {
+  width: 100%;
+	height: 5vh;
+  font-size: 100%;
+}
 .profile {
   display: flex;
   justify-content: left; 
@@ -213,7 +219,7 @@ export default {
   margin: 30px 0 0 10px;
   display: none;
 }
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1000px) {
   #first-navbar-toggler {
     display: block;
     position: absolute;
@@ -232,6 +238,7 @@ export default {
   #sidebar {
     background-color: transparent;
     display: none;
+    width: 100vw;
   }
 }
 .sidebar-header.true {
