@@ -28,6 +28,7 @@ export default createStore({
   },
   mutations: {
     authenticate(state, userdata) {
+      console.log(userdata)
       if (!userdata) {
         state.user = { name: "", guid: "", role: "", isLoggedIn: false };
         return;
@@ -36,6 +37,7 @@ export default createStore({
       state.user.guid = userdata.userGuid;
       state.user.role = userdata.role;
       state.user.isLoggedIn = true;
+      state.user.lists = [];
     },
     addList(state, list) {
       list.tasks = [];

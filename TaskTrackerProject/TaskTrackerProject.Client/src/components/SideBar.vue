@@ -64,6 +64,8 @@ import 'vue3-toastify/dist/index.css';
 export default {
   computed: {
     authenticated() {
+      console.log(this.$store.state.user.isLoggedIn)
+      console.log(this.$store.state.user.lists)
       return this.$store.state.user.isLoggedIn;
     },
     username: {
