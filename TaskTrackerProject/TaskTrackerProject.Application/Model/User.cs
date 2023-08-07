@@ -35,7 +35,7 @@ namespace TaskTrackerProject.Application.Model
         public string PasswordHash { get; set; }
         public string Email { get; set; }
         public Userrole Role { get; set; }
-        public List<List> Lists { get; } = new();
+        public List<UserList> Lists { get; } = new();
 
         /// <summary>
         /// takes a password, generates a random salt, and combines it with the password to create a hashed value.

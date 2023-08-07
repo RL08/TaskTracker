@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace TaskTrackerProject.Application.Model
 {
-    public class List
+    public class UserList
     {
-        public List(string name, User user)
+        public UserList(string name, User user)
         {
             Name = name;
             User = user;
@@ -18,7 +18,7 @@ namespace TaskTrackerProject.Application.Model
         }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        protected List() { }
+        protected UserList() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         
         [Key]
@@ -26,8 +26,8 @@ namespace TaskTrackerProject.Application.Model
         public int Id { get; private set; }
         public Guid Guid { get; set; }
         public string Name { get; set; }
-        public int UserId { get; private set; }
-        public User User { get; private set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
         public List<ListTask> Tasks { get; } = new();
     }
 }

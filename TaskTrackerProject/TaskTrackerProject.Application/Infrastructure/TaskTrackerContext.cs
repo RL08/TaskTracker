@@ -14,7 +14,7 @@ namespace TaskTrackerProject.Application.Infrastructure
     public class TaskTrackerContext : DbContext
     {
         public DbSet<User> Users => Set<User>();
-        public DbSet<List> Lists => Set<List>();
+        public DbSet<UserList> Lists => Set<UserList>();
         public DbSet<ListTask> Tasks => Set<ListTask>();
 
         public TaskTrackerContext(DbContextOptions<TaskTrackerContext> opt) : base(opt) { }
@@ -25,9 +25,7 @@ namespace TaskTrackerProject.Application.Infrastructure
             // Generic config for all entities
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                // ON DELETE RESTRICT instead of ON DELETE CASCADE
-                foreach (var key in entityType.GetForeignKeys())
-                    key.DeleteBehavior = DeleteBehavior.Restrict;
+
 
                 foreach (var prop in entityType.GetDeclaredProperties())
                 {
@@ -68,7 +66,7 @@ namespace TaskTrackerProject.Application.Infrastructure
             await Users.AddRangeAsync(users);
             await SaveChangesAsync();
 
-            var userlist = new List( name: "GetStarted", user: users[0]);
+            var userlist = new UserList( name: "GetStarted", user: users[0]);
             await Lists.AddAsync(userlist);
             await SaveChangesAsync();
 
@@ -108,17 +106,33 @@ namespace TaskTrackerProject.Application.Infrastructure
             await Users.AddRangeAsync(users);
             await SaveChangesAsync();
 
-            var lists = new Faker<List>("en").CustomInstantiator(f =>
+            var lists = new Faker<UserList>("en").CustomInstantiator(f =>
             {
-                return new List(
+                return new UserList(
                     name: "GetStarted",
-                    user: f.PickRandom<User>())
+                    user: users[0])
                 { Guid = f.Random.Guid() };
             })
             .Generate(10)
-            .GroupBy(a => a.User).Select(g => g.First())
+            .GroupBy(a => a.UserId).Select(g => g.First())
             .ToList();
             await Lists.AddRangeAsync(lists);
+            await SaveChangesAsync();
+
+            var tasks = new Faker<ListTask>("en").CustomInstantiator(f =>
+            {
+                return new ListTask(
+                    name: "Run 10km",
+                    status: "Not Finished",
+                    priority: "Low",
+                    list: lists[0],
+                    date: new DateTime())
+                { Guid = f.Random.Guid() };
+            })
+            .Generate(10)
+            .GroupBy(a => a.ListId).Select(g => g.First())
+            .ToList();
+            await Tasks.AddRangeAsync(tasks);
             await SaveChangesAsync();
         }
 
@@ -128,18 +142,12 @@ namespace TaskTrackerProject.Application.Infrastructure
         /// </summary>    
         public async Task CreateDatabase(bool isDevelopment)
         {
-            try
-            {
-                if (isDevelopment) { Database.EnsureDeleted(); }
-                // EnsureCreated only creates the model if the database does not exist or it has no
-                // tables. Returns true if the schema was created.  Returns false if there are
-                // existing tables in the database. This avoids initializing multiple times.
-                if (Database.EnsureCreated()) { await Initialize(); }
-                if (isDevelopment) await Seed();
-            }
-            catch (Exception) {
-                Console.WriteLine("Docker Container not on !!!");
-            }
+            if (isDevelopment) { Database.EnsureDeleted(); }
+            // EnsureCreated only creates the model if the database does not exist or it has no
+            // tables. Returns true if the schema was created.  Returns false if there are
+            // existing tables in the database. This avoids initializing multiple times.
+            if (Database.EnsureCreated()) { await Initialize(); }
+            if (isDevelopment) await Seed();
         }
     }
 }

@@ -1,12 +1,17 @@
 ﻿using AutoMapper;
-using TaskTrackerProject.Application.Dto;
+using System.Threading.Tasks;
 using TaskTrackerProject.Application.Model;
 
-public class MappingProfile : Profile 
+namespace TaskTrackerProject.Application.Dto
 {
-    public MappingProfile()
+    public class MappingProfile : Profile
     {
-        CreateMap<UserDto, User>();  // UserDto --> User
-        CreateMap<User, UserDto>();  // User --> UserDto
+        public MappingProfile()
+        {
+            CreateMap<UserListDto, UserList>();  // ListDto --> List
+            CreateMap<UserList, UserListDto>();  // List --> ListDto
+            CreateMap<ListTaskDto, ListTask>();  // ListTaskDto --> ListTask
+            CreateMap<ListTask, ListTaskDto>();  // ListTask --> ListTaskDto
+        }
     }
 }

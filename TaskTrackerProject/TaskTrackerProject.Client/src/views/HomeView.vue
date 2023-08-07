@@ -1,5 +1,6 @@
 <script setup>
 import SideBar from "../components/SideBar.vue"
+import axios from 'axios';
 </script>
 
 <template>
@@ -25,18 +26,28 @@ import SideBar from "../components/SideBar.vue"
           </tr>
         </tbody>
       </table>
+      <button @click="getinfo()"></button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      alllist: [],
+    };
+  },
   computed: {
     lists() {
       return this.$store.state.user.lists;
     },
   },
   methods: {
+    async getinfo() {
+      const data = (await axios.get('list/alllist')).data;
+      console.log(data)
+    },
     redirectTo(path, listId) {
       this.$store.commit('setCurrentListId', listId);
       this.$router.push(path);

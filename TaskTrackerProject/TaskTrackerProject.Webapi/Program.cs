@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using TaskTrackerProject.Application.Dto;
 using TaskTrackerProject.Application.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,7 +58,7 @@ if (app.Environment.IsDevelopment())
     {
         using (var db = scope.ServiceProvider.GetRequiredService<TaskTrackerContext>())
         {
-            db.CreateDatabase(isDevelopment: app.Environment.IsDevelopment());
+            await db.CreateDatabase(isDevelopment: app.Environment.IsDevelopment());
         }
     }
     app.UseCors();
@@ -65,9 +66,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.UseStaticFiles();
 app.MapFallbackToFile("index.html");
 app.Run();
