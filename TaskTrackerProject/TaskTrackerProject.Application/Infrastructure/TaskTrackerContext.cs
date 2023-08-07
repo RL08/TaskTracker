@@ -25,7 +25,9 @@ namespace TaskTrackerProject.Application.Infrastructure
             // Generic config for all entities
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-
+                // ON DELETE RESTRICT instead of ON DELETE CASCADE
+                //foreach (var key in entityType.GetForeignKeys())
+                //    key.DeleteBehavior = DeleteBehavior.Restrict;
 
                 foreach (var prop in entityType.GetDeclaredProperties())
                 {
