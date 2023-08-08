@@ -99,13 +99,36 @@ namespace TaskTrackerProject.Webapi.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpDelete("{guid:Guid}")]
-        public async Task<IActionResult> DeleteArticleAsync(Guid guid)
+        public async Task<IActionResult> DeleteList(Guid guid)
         {
             var lists = _db.Lists.FirstOrDefault(a => a.Guid == guid);
             if (lists is null) { return NotFound(); }
             _db.Lists.Remove(lists);
             try { await _db.SaveChangesAsync(); }
             catch (DbUpdateException) { return BadRequest(); }
+            return NoContent();
+        }
+
+        /// <summary>
+        /// PUT Request /api/news/(guid) with JSON body
+        /// Updates an list in the database. 
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <param name="listDto"></param>
+        /// <returns></returns>
+        [HttpPut("{guid:Guid}")]
+        public async Task<IActionResult> EditList(Guid guid, UserListDto listDto)
+        {
+            if (guid != listDto.Guid) { return BadRequest(); }
+            var list = _db.Lists.FirstOrDefault(a => a.Guid == guid);
+            if (list is null) { return NotFound(); }
+            _mapper.Map(listDto, list,
+                opt => opt.AfterMap((dto, entity) =>
+                {
+                    entity.User = _db.Users.First(a => a.Guid == listDto.UserGuid);
+                }));
+            try { await _db.SaveChangesAsync(); }
+            catch (DbUpdateException) { return BadRequest(); } 
             return NoContent();
         }
     }
