@@ -145,7 +145,14 @@ namespace TaskTrackerProject.Webapi.Controllers
             }
             else { return BadRequest("User is already in the database."); }
             if (!user.CheckPassword(credentials.password)) { return Unauthorized(); }
-            return Ok(user);
+            return Ok(new
+            {
+                user.Guid,
+                user.Username,
+                user.Email,
+                user.Role, 
+                user.Lists
+            });
         }
     }
 }

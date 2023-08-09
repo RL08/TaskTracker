@@ -26,13 +26,13 @@ namespace TaskTrackerProject.Webapi.Controllers
         }
 
         /// <summary>
-        /// GET Request /api/list/
+        /// GET Request /api/list
         /// Returns a list of all lists with base information.
         /// </summary>
         [HttpGet]
-        public IActionResult GetAllLists()
+        public async Task<IActionResult> GetAllLists()
         {
-            var lists = _db.Lists
+            var lists = await _db.Lists
                 .Select(a => new
                 {
                     a.Guid,
@@ -42,17 +42,18 @@ namespace TaskTrackerProject.Webapi.Controllers
                     a.UserId,
                     UserUsername = a.User.Username,
                     UserEmail = a.User.Email,
-                }).ToList();
+                }).ToListAsync();
             return Ok(lists);
         }
 
         /// <summary>
         /// GET Request /api/list/guid
+        /// Returns a list with base information.
         /// </summary>
         [HttpGet("{guid:Guid}")]
-        public IActionResult GetListsDetail(Guid guid) // from list
+        public async Task<IActionResult> GetListDetail(Guid guid) // from list
         {
-            var list = _db.Lists
+            var list = await _db.Lists
                 .Where(a => a.Guid == guid)
                 .Select(a => new
                 {
@@ -65,7 +66,7 @@ namespace TaskTrackerProject.Webapi.Controllers
                     UserEmail = a.User.Email,
                     a.Tasks
                 })
-                .FirstOrDefault(a => a.Guid == guid);
+                .FirstOrDefaultAsync(a => a.Guid == guid);
             if (list is null) { return NotFound(); }
             return Ok(list);
         }
@@ -97,11 +98,10 @@ namespace TaskTrackerProject.Webapi.Controllers
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        [Authorize]
         [HttpDelete("{guid:Guid}")]
         public async Task<IActionResult> DeleteList(Guid guid)
         {
-            var lists = _db.Lists.FirstOrDefault(a => a.Guid == guid);
+            var lists = await _db.Lists.FirstOrDefaultAsync(a => a.Guid == guid);
             if (lists is null) { return NotFound(); }
             _db.Lists.Remove(lists);
             try { await _db.SaveChangesAsync(); }
@@ -110,8 +110,8 @@ namespace TaskTrackerProject.Webapi.Controllers
         }
 
         /// <summary>
-        /// PUT Request /api/news/(guid) with JSON body
-        /// Updates an list in the database. 
+        /// PUT Request /api/news/guid with JSON body
+        /// Updates a list in the database. 
         /// </summary>
         /// <param name="guid"></param>
         /// <param name="listDto"></param>
@@ -120,7 +120,7 @@ namespace TaskTrackerProject.Webapi.Controllers
         public async Task<IActionResult> EditList(Guid guid, UserListDto listDto)
         {
             if (guid != listDto.Guid) { return BadRequest(); }
-            var list = _db.Lists.FirstOrDefault(a => a.Guid == guid);
+            var list = await _db.Lists.FirstOrDefaultAsync(a => a.Guid == guid);
             if (list is null) { return NotFound(); }
             _mapper.Map(listDto, list,
                 opt => opt.AfterMap((dto, entity) =>

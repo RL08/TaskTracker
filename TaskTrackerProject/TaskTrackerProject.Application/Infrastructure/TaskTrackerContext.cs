@@ -74,8 +74,8 @@ namespace TaskTrackerProject.Application.Infrastructure
 
             var task = new ListTask( 
                 name: "Run 10km", 
-                status: "Not Finished", 
-                priority: "Low", 
+                status: Status.NotFinished, 
+                priority: Priority.Low, 
                 list: userlist, 
                 date: new DateTime()
             );
@@ -124,9 +124,9 @@ namespace TaskTrackerProject.Application.Infrastructure
             var tasks = new Faker<ListTask>("en").CustomInstantiator(f =>
             {
                 return new ListTask(
-                    name: "Run 10km",
-                    status: "Not Finished",
-                    priority: "Low",
+                    name: "Test 1",
+                    status: Status.NotFinished,
+                    priority: Priority.Low,
                     list: lists[0],
                     date: new DateTime())
                 { Guid = f.Random.Guid() };
