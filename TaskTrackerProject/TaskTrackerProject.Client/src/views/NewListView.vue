@@ -82,7 +82,7 @@ import SideBar from "../components/SideBar.vue"
 export default {
   computed: {
     list() {
-      return this.$store.state.user.lists[this.$store.state.user.currentListId];
+      return this.$store.state.user.lists;
     },
   },
   data() {

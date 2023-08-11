@@ -1,4 +1,4 @@
-import { createStore } from 'vuex'   // npm install vuex
+import { createStore } from 'vuex'   
 
 export default createStore({
   state() {
@@ -7,28 +7,15 @@ export default createStore({
         name: "",
         guid: "",
         isLoggedIn: false,
-        lists: [{
-          id: "0",
-          name: "GetStarted",
-          path: "/list",
-          currentListId: null,
-          currentTaskId: null,
-          tasks: [{
-            id: "0",
-            name: "Run 10 km",
-            status : "Not Finished",
-            priority: "Low",
-            date: "∞",
-            favorite: false,
-          }],
-          favoriteTasks: [],           
-        }],
+        lists: [],
+        tasks: [],
+        currentListId: null,
+        currentTaskId: null,
       }
     }
   },
   mutations: {
     authenticate(state, userdata) {
-      console.log(userdata)
       if (!userdata) {
         state.user = { name: "", guid: "", role: "", isLoggedIn: false };
         return;
@@ -37,12 +24,15 @@ export default createStore({
       state.user.guid = userdata.userGuid;
       state.user.role = userdata.role;
       state.user.isLoggedIn = true;
-      state.user.lists = [];
     },
-    addList(state, list) {
-      list.tasks = [];
-      list.favoriteTasks = [];
-      state.user.lists.push(list);
+    async getList(state, listData) {
+      const userListArray = [];
+      for(let list in listData) {
+        if (listData[list].userUsername === state.user.name) {
+          userListArray.push(listData[list]);
+        }     
+      }   
+      state.user.lists = userListArray; 
     },
     addTask(state, task) {
       state.user.lists[state.user.currentListId].tasks.push(task);

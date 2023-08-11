@@ -73,7 +73,6 @@ export default {
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
         this.$store.commit('authenticate', userdata);     
 				this.$router.push("/");
-				console.log("Success!");
 			} catch (e) {
         if(e.response === undefined) { console.error(e); }
         else if (e.response.status == 401) {

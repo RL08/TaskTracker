@@ -1,6 +1,8 @@
 <script setup>
 import SideBar from "../components/SideBar.vue"
 import axios from 'axios';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
@@ -17,71 +19,68 @@ import axios from 'axios';
             <th>Progress</th>
           </tr>
         </thead>
-        <tbody v-for="list in lists" :key="list.id" @click="redirectTo(list.path, list.id)">
+        <tbody v-for="list in lists" :key="list.id" @click="redirectTo(list)">
           <tr>
             <td> {{ list.name }} </td>
             <td> {{ getListStatus(list) }} </td>
             <td> {{ getListPriority(list) }} </td>
-            <td> <progress :value="getCompletedTaskCount(list)" :max="list.tasks.length"> </progress> </td>
+            <td> <progress :value="getCompletedTaskCount(list)" :max="list.tasks.length"> </progress> </td> 
           </tr>
         </tbody>
       </table>
-      <button @click="getinfo()"></button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      alllist: [],
-    };
+  async mounted() {
+    await this.getList();
   },
   computed: {
-    lists() {
-      return this.$store.state.user.lists;
+    lists() { 
+      return this.$store.state.user.lists; 
     },
   },
   methods: {
-    async getinfo() {
-      const data = (await axios.get('list/alllist')).data;
-      console.log(data)
+    async getList() {
+      try { this.$store.commit('getList', (await axios.get("list")).data); } 
+      catch (e) { toast.error("Error loading API") }
     },
-    redirectTo(path, listId) {
-      this.$store.commit('setCurrentListId', listId);
-      this.$router.push(path);
+    redirectTo(list) {
+      this.$store.commit('setCurrentListId', list.Id);
+      this.$router.push(`list/${list.guid}`); 
     },
     getListStatus(list) {
-      if(list.tasks.length === 0) {
-        return "No Status";
-      }
-      else if (list.tasks.some((task) => task.status === "Not Finished")) {
+      if (list.tasks.some((task) => task.status === 1)) {
         return "Not Finished";
       } 
-      else if (list.tasks.some((task) => task.status === "In Progress")) {
+      else if (list.tasks.some((task) => task.status === 2)) {
         return "In Progress";
       } 
-      else {
+      else if (list.tasks.some((task) => task.status === 3)) {
         return "Completed";
+      }
+      else {
+        return "No Status";
       }
     },
     getListPriority(list) {
-      if(list.tasks.length === 0) {
-        return "No Priority";
-      }
-      else if (list.tasks.some((task) => task.priority === "Low")) {
+      if (list.tasks.some((task) => task.priority === 1)) {
         return "Low";
       }
-      else if (list.tasks.some((task) => task.priority === "Medium")) {
+      else if (list.tasks.some((task) => task.priority === 2)) {
         return "Medium";
       }
-      else { 
+      else if (list.tasks.some((task) => task.priority === 3)) { 
         return "High";
+      }
+      else {
+        return "No Priority";
       }
     },
     getCompletedTaskCount(list) {
-      return list.tasks.filter((task) => task.status === "Completed").length;
+      return list.tasks.filter((task) => task.status === 3).length;
     },
   },
 };

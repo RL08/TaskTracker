@@ -21,8 +21,8 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/list',
-      name: 'newlist',
+      path: '/list/:listguid',
+      name: 'newlist/:listguid',
       component: NewListView
     },
     {

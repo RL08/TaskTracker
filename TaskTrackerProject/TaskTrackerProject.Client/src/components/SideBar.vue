@@ -45,9 +45,9 @@ import 'vue3-toastify/dist/index.css';
         </li>
         <li id="list-name" class="nav-link" :class="{ 'true': showInput }" >
           <font-awesome-icon class="icon" icon="fa-plus"/> 
-          <input type="text" placeholder="new list" id="list-input" v-model="loginModel.listname" @keyup.enter="addlist()">
+          <input type="text" placeholder="new list" id="list-input" v-model="listname" @keyup.enter="addlist()">
         </li>
-        <li class="nav-link" v-for="list in lists" :key="list.name" @click="redirectTo(list.path, list.id)">
+        <li class="nav-link" v-for="list in this.lists" :key="list.id" @click="redirectTo(list)">
           <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ list.name }}
         </li>
         <li>
@@ -62,16 +62,15 @@ import 'vue3-toastify/dist/index.css';
 
 <script>
 export default {
+  async mounted() {
+    await this.getList();
+  },
   computed: {
     authenticated() {
-      console.log(this.$store.state.user.isLoggedIn)
-      console.log(this.$store.state.user.lists)
       return this.$store.state.user.isLoggedIn;
     },
-    username: {
-      get() {
-        return this.$store.state.user.name;
-      }
+    username() {
+      return this.$store.state.user.name;
     },
     lists() {
       return this.$store.state.user.lists;
@@ -84,8 +83,8 @@ export default {
     return {
       loginModel: {
         username: "",
-        listname: "",
-      },  
+      }, 
+      listname: "", 
       showSidebar: false,
       showNavbar: false,
       showInput: false,
@@ -95,6 +94,10 @@ export default {
     ProfileAvatar,
   },  
   methods: {
+    async getList() {
+      try { this.$store.commit('getList', (await axios.get("list")).data); } 
+      catch (e) { toast.error("Error loading API") }
+    },
     toggleSidebar() {
       this.showSidebar = !this.showSidebar; 
       this.showNavbar = !this.showNavbar;
@@ -102,25 +105,37 @@ export default {
     showinputfield() {
       this.showInput = !this.showInput; 
     },
-    redirectTo(path, listId) {
+    redirectTo(list) {
       this.toggleSidebar();
-      this.$store.commit('setCurrentListId', listId);
-      this.$router.push(path);
+      this.$store.commit('setCurrentListId', list.Id);
+      this.$router.push(`list/${list.guid}`);
     },
-    addlist() {
-      if (this.showInput) {
+    async addlist() {
+      if (this.showInput && this.authenticated ) {
         const newList = {
-          id: this.$store.state.user.lists.length,
-          name: this.loginModel.listname,
-          path: "/list",
-          icon: "fa-solid fa-list-check",
+          name: this.listname,
+          userguid: this.$store.state.user.guid
         };
-        this.$store.commit("addList", newList);
-        this.loginModel.listname = "";
+        try { 
+          await axios.post('list/addlist', newList); 
+          this.getList();
+          toast.success("New list has been created", { autoClose: 1000});
+        } 
+        catch (e) {
+          if (e.response.status == 400) {
+            toast.error("BadRequest 400")
+          }
+        }
+        this.listname = "";
         this.showInput = !this.showInput; 
-        toast.success("New list has been created", { autoClose: 1000});
-        // console.log(this.$store.state.user.links);
+      } 
+      else {
+        toast.error("You are not logged in")
       }
+    },
+    async addDefaultLists() {
+      this.listname = "Unknown list (" + this.lists.length + ")";
+      for (let i = 1; i <= 10; i++) { this.addlist(); } 
     },
     logout() {
       if(this.$store.state.user.isLoggedIn) {
@@ -131,18 +146,6 @@ export default {
       else {
         toast.warning("You are not logged in!", { autoClose: 1000, });
       }
-    },
-    addDefaultLists() {
-      for (let i = 1; i <= 10; i++) {
-        const list = {
-          name: "Unknown list (" + this.$store.state.user.lists.length + ")",
-          path: "/list",
-          icon: "fa-solid fa-list-check",
-          id: this.$store.state.user.lists.length,
-        };
-        this.$store.commit('addList', list);
-      } 
-      toast.success("Test list has been created", { autoClose: 1000});
     },
   },
 }

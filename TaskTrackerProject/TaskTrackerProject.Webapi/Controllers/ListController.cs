@@ -42,6 +42,7 @@ namespace TaskTrackerProject.Webapi.Controllers
                     a.UserId,
                     UserUsername = a.User.Username,
                     UserEmail = a.User.Email,
+                    a.Tasks
                 }).ToListAsync();
             return Ok(lists);
         }
