@@ -107,15 +107,16 @@ export default {
     },
     redirectTo(list) {
       this.toggleSidebar();
-      this.$store.commit('setCurrentListId', list.Id);
+      this.$store.commit('setCurrentListGuid', list.guid);
       this.$router.push(`list/${list.guid}`);
     },
     async addlist() {
-      if (this.showInput && this.authenticated ) {
+      if (this.authenticated ) {
         const newList = {
-          name: this.listname,
+          name: this.listname ? this.listname : "Unknown list",
           userguid: this.$store.state.user.guid
         };
+        console.log(newList)
         try { 
           await axios.post('list/addlist', newList); 
           this.getList();
@@ -127,15 +128,17 @@ export default {
           }
         }
         this.listname = "";
-        this.showInput = !this.showInput; 
+        this.showInput = false; 
       } 
       else {
         toast.error("You are not logged in")
+        return;
       }
     },
-    async addDefaultLists() {
-      this.listname = "Unknown list (" + this.lists.length + ")";
-      for (let i = 1; i <= 10; i++) { this.addlist(); } 
+    async addDefaultLists() { 
+      for (let i = 1; i <= 10; i++) {
+        this.addlist(); 
+      } 
     },
     logout() {
       if(this.$store.state.user.isLoggedIn) {

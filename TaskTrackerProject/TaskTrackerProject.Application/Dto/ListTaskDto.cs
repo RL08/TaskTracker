@@ -15,6 +15,7 @@ namespace TaskTrackerProject.Application.Dto
         string Name,
         Status Status,
         Priority Priority,
+        bool IsFavorite,
         DateTime Date,
         Guid ListGuid) : IValidatableObject
     {

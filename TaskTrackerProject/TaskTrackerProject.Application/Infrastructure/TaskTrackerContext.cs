@@ -76,6 +76,7 @@ namespace TaskTrackerProject.Application.Infrastructure
                 name: "Run 10km", 
                 status: Status.NotFinished, 
                 priority: Priority.Low, 
+                isfavorite: false,
                 list: userlist, 
                 date: new DateTime()
             );
@@ -127,6 +128,7 @@ namespace TaskTrackerProject.Application.Infrastructure
                     name: "Test 1",
                     status: Status.NotFinished,
                     priority: Priority.Low,
+                    isfavorite: false,
                     list: lists[0],
                     date: new DateTime())
                 { Guid = f.Random.Guid() };

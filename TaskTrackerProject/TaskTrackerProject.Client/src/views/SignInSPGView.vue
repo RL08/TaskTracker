@@ -59,7 +59,7 @@ export default {
       // uncomment to see input data
 
 			try {
-				const userdata = (await axios.post('user/loginms', this.loginModel)).data;
+				const userdata = (await axios.post('user/loginspg', this.loginModel)).data;
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
         this.$store.commit('authenticate', userdata);     
         this.$router.push("/");

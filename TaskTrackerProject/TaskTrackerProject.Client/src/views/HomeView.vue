@@ -48,7 +48,7 @@ export default {
       catch (e) { toast.error("Error loading API") }
     },
     redirectTo(list) {
-      this.$store.commit('setCurrentListId', list.Id);
+      this.$store.commit('setCurrentListGuid', list.guid);
       this.$router.push(`list/${list.guid}`); 
     },
     getListStatus(list) {
@@ -89,6 +89,7 @@ export default {
 <style scoped>
 .wrapper {
   overflow-y: auto;
+  overflow-x: hidden!important;
   height: 100vh;
 }
 .container {

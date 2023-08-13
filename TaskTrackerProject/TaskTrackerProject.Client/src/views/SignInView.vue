@@ -35,7 +35,7 @@ import SideBar from "../components/SideBar.vue"
             <input type="password" required placeholder="Password" v-model="loginModel.password"/>
           </div>
 					<div class="form-group-icon">
-						<router-link to="/signinms">
+						<router-link to="/signinspg">
 							<font-awesome-icon id="ms" icon="fa-brands fa-microsoft"/>
 						</router-link>
 					</div>

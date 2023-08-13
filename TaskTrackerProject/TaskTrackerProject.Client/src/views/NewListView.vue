@@ -3,6 +3,7 @@ import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import Calendar from 'primevue/calendar';
 import SideBar from "../components/SideBar.vue"
+import axios from "axios";
 </script>
 
 <template>
@@ -11,7 +12,7 @@ import SideBar from "../components/SideBar.vue"
     <div class="container" id="button-container">
       <button id="back" @click="redirectToHome()"> <font-awesome-icon icon="fa-solid fa-caret-left" /> Back </button> 
     </div>
-    <h1> {{ list.name }} </h1>
+    <h1> {{ lists.name }} </h1>
     <div class="container" id="table-container">
       <table class="table table-bordered">
         <thead>
@@ -23,7 +24,7 @@ import SideBar from "../components/SideBar.vue"
             <th> Options </th>
           </tr>
         </thead>
-        <tbody v-for="task in list.tasks" :key="task.id">
+        <tbody v-for="task in lists.tasks" :key="task.id">
           <tr>
             <td @click="enableEditName(task.id)"> {{ task.name }} </td>
             <td @click="enableEditStatus(task.id)"> {{ task.status }} </td>
@@ -81,16 +82,22 @@ import SideBar from "../components/SideBar.vue"
 <script>
 export default {
   computed: {
-    list() {
+    listGuid() {
+      return this.$store.state.user.currentListGuid;
+    },
+    lists() {
       return this.$store.state.user.lists;
+    },
+    tasks() {
+      return this.$store.state.user.tasks;
     },
   },
   data() {
 		return {
 			listModel: {
 				task: "",
-        taskstatus: "Not Finished",
-        taskpriority: "Low",
+        taskstatus: 1,
+        taskpriority: 1,
         taskdate: new Date(),
 			},
       showStatusBox: false,
@@ -109,24 +116,38 @@ export default {
     Calendar,
   },
   methods: {
-    addTask() {
+    async getTask() {
+      try { this.$store.commit('getList', (await axios.get("list")).data); } 
+      catch (e) { toast.error("Error loading API") }
+    },
+    async addTask() {
       if(this.listModel.task !== "") {
         /**
          * if accessDateBox is true -> this.listModel.taskdate.toDateString()
          * if accessDateBox is false -> ∞ 
          */
+        console.log(this.listGuid)
         const newTask = {
-          id: this.list.tasks.length,
           name: this.listModel.task,
           status: this.listModel.taskstatus,
           priority: this.listModel.taskpriority,
-          date: this.accessDateBox ? this.listModel.taskdate.toDateString() : "∞", 
-          favorite: false,
+          isfavorite: false,
+          date: this.accessDateBox ? this.listModel.taskdate.toDateString() : new Date(), //tommorow change date to nullable 
+          listGuid: this.listGuid,
         };
+        console.log(newTask)
+        try { 
+          await axios.post('task/addtask', newTask); 
+          this.getTask();
+          toast.success("New Task has been created", { autoClose: 1000});
+        } 
+        catch (e) {
+          if (e.response.status == 400) {
+            toast.error("BadRequest 400")
+          }
+        }
         this.accessDateBox = false;
-        this.$store.commit("addTask", newTask);
         this.listModel.task = ""; 
-        toast.success("Task added", { autoClose: 1000, });
       }
     },
     deleteTask(task) {

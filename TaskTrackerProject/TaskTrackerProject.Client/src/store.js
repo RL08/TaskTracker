@@ -9,7 +9,7 @@ export default createStore({
         isLoggedIn: false,
         lists: [],
         tasks: [],
-        currentListId: null,
+        currentListGuid: null,
         currentTaskId: null,
       }
     }
@@ -27,12 +27,19 @@ export default createStore({
     },
     async getList(state, listData) {
       const userListArray = [];
+      const userTaskArray = [];
       for(let list in listData) {
         if (listData[list].userUsername === state.user.name) {
           userListArray.push(listData[list]);
-        }     
+          if(listData[list].id === listData[list].tasks.listId){
+            userTaskArray.push(listData[list].tasks);
+          }
+        }    
       }   
       state.user.lists = userListArray; 
+      state.user.tasks = userTaskArray; 
+      console.log(state.user.lists)
+      console.log(state.user.tasks)
     },
     addTask(state, task) {
       state.user.lists[state.user.currentListId].tasks.push(task);
@@ -48,8 +55,8 @@ export default createStore({
       state.user.lists[state.user.currentListId].favoriteTasks = state.user.lists[state.user.currentListId].favoriteTasks.filter(
         favoritetask => favoritetask.id !== task.id);
     },   
-    setCurrentListId(state, listId) {
-      state.user.currentListId = listId;
+    setCurrentListGuid(state, listGuid) {
+      state.user.currentListGuid = listGuid;
     },    
   }
 });

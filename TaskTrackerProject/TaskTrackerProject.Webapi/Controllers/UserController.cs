@@ -39,8 +39,8 @@ namespace TaskTrackerProject.Webapi.Controllers
         /// </summary>
         /// <param name="credentials"></param>
         /// <returns></returns>
-        [HttpPost("loginms")]
-        public IActionResult LoginMS([FromBody] CredentialsDto credentials)
+        [HttpPost("loginspg")]
+        public async Task<IActionResult> LoginMSAsync([FromBody] CredentialsDto credentials)
         {
             var lifetime = TimeSpan.FromHours(3);
             var searchuser = _config["Searchuser"];
@@ -53,6 +53,17 @@ namespace TaskTrackerProject.Webapi.Controllers
                 : AdService.Login(credentials.username, credentials.password);
             var currentUser = service.CurrentUser;
             if (currentUser is null) { return Unauthorized(); }
+
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username == credentials.username);
+            if (user is null)
+            {
+                user = new User(credentials.username, credentials.password, credentials.email, Userrole.User);
+                await _db.Users.AddAsync(user);
+                try { await _db.SaveChangesAsync(); }
+                catch (DbUpdateException) { return BadRequest(); }
+            }
+            if (!user.CheckPassword(credentials.password)) { return Unauthorized(); }
+
             var role = localAdmins.Contains(currentUser.Cn)
                             ? AdUserRole.Management.ToString() : currentUser.Role.ToString();
             var group = (currentUser.Role, currentUser.Classes.Length > 0) switch
@@ -82,6 +93,7 @@ namespace TaskTrackerProject.Webapi.Controllers
             return Ok(new
             {
                 Username = currentUser.Cn,
+                UserGuid = user.Guid,
                 Role = role,
                 Group = group,
                 Token = tokenHandler.WriteToken(token)
@@ -147,8 +159,8 @@ namespace TaskTrackerProject.Webapi.Controllers
             if (!user.CheckPassword(credentials.password)) { return Unauthorized(); }
             return Ok(new
             {
-                user.Guid,
                 user.Username,
+                UserGuid = user.Guid,
                 user.Email,
                 user.Role, 
                 user.Lists
