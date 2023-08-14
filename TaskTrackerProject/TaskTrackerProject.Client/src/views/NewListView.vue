@@ -24,9 +24,9 @@ import axios from "axios";
             <th> Options </th>
           </tr>
         </thead>
-        <tbody v-for="task in lists.tasks" :key="task.id">
+        <tbody v-for="task in tasks" :key="task.id">
           <tr>
-            <td @click="enableEditName(task.id)"> {{ task.name }} </td>
+            <td @click="enableEditName(task, tasks)"> {{ task.name }} </td>
             <td @click="enableEditStatus(task.id)"> {{ task.status }} </td>
             <td @click="enableEditPriority(task.id)"> {{ task.priority }} </td>
             <td @click="enableEditDate(task.id)"> {{ task.date }} </td>
@@ -95,7 +95,6 @@ export default {
   data() {
 		return {
 			listModel: {
-				task: "",
         taskstatus: 1,
         taskpriority: 1,
         taskdate: new Date(),
@@ -214,7 +213,9 @@ export default {
     enableEdit() {
       this.edit = !this.edit; 
     },
-    enableEditName(id) {
+    enableEditName(task, tasks) {
+      console.log(task)
+      console.log(tasks)
       if(this.edit) {
         this.list.currentTaskId = id;
         this.editName = true;
@@ -263,7 +264,8 @@ export default {
       // console.log(this.list.favoriteTasks);
     },
     isTaskFavorite(task) {
-      return this.list.favoriteTasks.some((favoriteTask) => favoriteTask.id === task.id);
+      // return this.list.favoriteTasks.some((favoriteTask) => favoriteTask.id === task.id);
+      return
     }
   },
   watch: {

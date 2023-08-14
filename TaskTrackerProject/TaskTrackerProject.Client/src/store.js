@@ -28,12 +28,13 @@ export default createStore({
     async getList(state, listData) {
       const userListArray = [];
       const userTaskArray = [];
-      for(let list in listData) {
-        if (listData[list].userUsername === state.user.name) {
-          userListArray.push(listData[list]);
-          if(listData[list].id === listData[list].tasks.listId){
-            userTaskArray.push(listData[list].tasks);
-          }
+      for(let listId in listData) {
+        if (listData[listId].userUsername === state.user.name) {
+          userListArray.push(listData[listId]);
+          // for loop because of 2x array
+          for (var i=0; i < listData[listId].tasks.length; i++) {
+            userTaskArray.push(listData[listId].tasks[i]);
+          }  
         }    
       }   
       state.user.lists = userListArray; 
