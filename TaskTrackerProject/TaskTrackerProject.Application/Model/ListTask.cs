@@ -10,7 +10,7 @@ namespace TaskTrackerProject.Application.Model
 {
     public class ListTask
     {
-        public ListTask(string name, Status status, Priority priority, bool isfavorite, UserList list, DateTime date)
+        public ListTask(string name, Status status, Priority priority, bool isfavorite, UserList list, DateTime? date)
         {
             Name = name;
             Status = status;
@@ -35,6 +35,6 @@ namespace TaskTrackerProject.Application.Model
         public bool IsFavorite { get; set; }
         public int ListId { get; set; }
         public UserList List { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
     }
 }

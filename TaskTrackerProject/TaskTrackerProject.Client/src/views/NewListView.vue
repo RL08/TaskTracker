@@ -26,10 +26,10 @@ import axios from "axios";
         </thead>
         <tbody v-for="task in tasks" :key="task.id">
           <tr>
-            <td @click="enableEditName(task, tasks)"> {{ task.name }} </td>
-            <td @click="enableEditStatus(task.id)"> {{ task.status }} </td>
-            <td @click="enableEditPriority(task.id)"> {{ task.priority }} </td>
-            <td @click="enableEditDate(task.id)"> {{ task.date }} </td>
+            <td @click="enableEditName(task)"> {{ task.name }} </td>
+            <td @click="enableEditStatus(task)"> {{ getTaskStatus(task) }} </td>
+            <td @click="enableEditPriority(task)"> {{ getTaskPriority(task) }} </td>
+            <td @click="enableEditDate(task)"> {{ getTaskDate(task) }} </td>
             <td> 
               <font-awesome-icon class="icon" :class="{ 'true': edit }" icon="fa-solid fa-pen" @click="enableEdit()"/> 
               <font-awesome-icon class="icon" icon="fa-solid fa-trash" @click="deleteTask(task)"/> 
@@ -41,24 +41,25 @@ import axios from "axios";
     </div>
     <div class="container" id="icon-container">
       <div class="icon-box" v-if="showStatusBox">
-        <button class="bg-danger"  @click="setStatus('Not Finished')"> Not Finished </button>
-        <button class="bg-warning" @click="setStatus('In Progress')"> In Progress </button>
-        <button class="bg-success" @click="setStatus('Completed')"> Completed </button>
+        <button class="bg-danger"  @click="setStatus(1)"> Not Finished </button>
+        <button class="bg-warning" @click="setStatus(2)"> In Progress </button>
+        <button class="bg-success" @click="setStatus(3)"> Completed </button>
       </div>
     </div>
     <div class="container" id="icon-container">
       <div class="icon-box" v-if="showPriorityBox">
-        <button class="bg-danger"  @click="setPriority('Low')"> Low </button>
-        <button class="bg-warning" @click="setPriority('Medium')"> Medium </button>
-        <button class="bg-success" @click="setPriority('High')"> High </button>
+        <button class="bg-danger"  @click="setPriority(1)"> Low </button>
+        <button class="bg-warning" @click="setPriority(2)"> Medium </button>
+        <button class="bg-success" @click="setPriority(3)"> High </button>
       </div>
     </div>
     <div class="container" id="icon-container">
       <div class="icon-box" id="datepicker" v-if="showDateBox"> 
+        <button class="bg-primary" @click="setDate('Unlimited')"> Unlimited </button>
         <button class="bg-primary" @click="setDate('Today')"> Today </button>
         <button class="bg-primary" @click="setDate('Tommorow')"> Tommorow </button>
         <button class="bg-primary" @click="setDate('Next Week')"> Next Week </button>
-        <Calendar v-model="this.listModel.taskdate" dateFormat="dd/mm/yy" showIcon/>
+        <Calendar v-model="this.listModel.taskcalendardate" dateFormat="dd/mm/yy" showIcon/>
       </div>
     </div>
     <div class="container" id="fa-icon-container" v-if="!this.editName">
@@ -67,7 +68,7 @@ import axios from "axios";
         <font-awesome-icon class="icon" icon="fa-solid fa-triangle-exclamation" @click="togglePriorityBox()" /> 
         <font-awesome-icon class="icon" icon="fa fa-calendar" @click="toggleDateBox()"/> 
         <font-awesome-icon class="icon" icon="fa-solid fa-clock" /> 
-        <font-awesome-icon class="icon" icon="fa-solid fa-repeat" /> 
+        <!-- <font-awesome-icon class="icon" icon="fa-solid fa-repeat" />  -->
       </div>
     </div>
     <div class="container" id="input-container" v-if="!editName">
@@ -81,9 +82,15 @@ import axios from "axios";
 
 <script>
 export default {
+  async mounted() {
+    await this.getTask();
+  },
   computed: {
     listGuid() {
       return this.$store.state.user.currentListGuid;
+    },
+    task() {
+      return this.$store.state.user.currentTask;
     },
     lists() {
       return this.$store.state.user.lists;
@@ -95,9 +102,11 @@ export default {
   data() {
 		return {
 			listModel: {
+        task: "",
         taskstatus: 1,
         taskpriority: 1,
-        taskdate: new Date(),
+        taskdate: null,
+        taskcalendardate: new Date(),
 			},
       showStatusBox: false,
       showPriorityBox: false,
@@ -116,31 +125,29 @@ export default {
   },
   methods: {
     async getTask() {
-      try { this.$store.commit('getList', (await axios.get("list")).data); } 
+      try { this.$store.commit('getTask', (await axios.get("task")).data); } 
       catch (e) { toast.error("Error loading API") }
     },
     async addTask() {
       if(this.listModel.task !== "") {
-        /**
-         * if accessDateBox is true -> this.listModel.taskdate.toDateString()
-         * if accessDateBox is false -> ∞ 
-         */
-        console.log(this.listGuid)
+        // if accessDateBox is true -> this.listModel.taskdate
+        // if accessDateBox is false -> null
         const newTask = {
           name: this.listModel.task,
           status: this.listModel.taskstatus,
           priority: this.listModel.taskpriority,
           isfavorite: false,
-          date: this.accessDateBox ? this.listModel.taskdate.toDateString() : new Date(), //tommorow change date to nullable 
+          date: this.accessDateBox ? this.listModel.taskdate : null, 
           listGuid: this.listGuid,
         };
-        console.log(newTask)
         try { 
-          await axios.post('task/addtask', newTask); 
-          this.getTask();
+          // (await axios.post('task/addtask', newTask)).data will be executed
+          const task = (await axios.post('task/addtask', newTask)).data; 
+          this.$store.commit('addTask', task);
           toast.success("New Task has been created", { autoClose: 1000});
         } 
         catch (e) {
+          console.log(e)
           if (e.response.status == 400) {
             toast.error("BadRequest 400")
           }
@@ -149,99 +156,114 @@ export default {
         this.listModel.task = ""; 
       }
     },
-    deleteTask(task) {
-      const currentTask = {
-        id: task.id,
-        name: task.name,
-        status: task.status,
-        priority: task.priority,
-        date: task.date,
-        favorite: task.favorite,
-      };
-      this.$store.commit("deleteTask", currentTask);
-      toast.info("Task deleted", { autoClose: 1000 });
+    async deleteTask(task) {
+      this.$store.commit('deleteTask', task);
+      await axios.delete(`task/${task.guid}`, task.guid); 
     },
-    renameTask() {
-      this.list.tasks[this.list.currentTaskId].name = this.listModel.task;
-      this.listModel.task = ""; 
-      this.editName = false;
-    },
-    // scrollToBottom() {
-    //   const wrapper = this.$refs.wrapper;
-    //   wrapper.scrollTop = wrapper.scrollHeight;
-    // },
-    redirectToHome() {
-      this.$router.push("/");
-    },
-    toggleStatusBox() {
-      this.showStatusBox = !this.showStatusBox;
-    },
-    setStatus(status) {
-      this.listModel.taskstatus = status;
-      if(this.editStatus) {
-        this.list.tasks[this.list.currentTaskId].status = this.listModel.taskstatus; 
-        this.editStatus = false;
-      }
-      this.showStatusBox = false; 
-    },
-    togglePriorityBox() {
-      this.showPriorityBox = !this.showPriorityBox;
-    },
-    setPriority(priority) {
-      this.listModel.taskpriority = priority;
-      if(this.editPriority) {
-        this.list.tasks[this.list.currentTaskId].priority = this.listModel.taskpriority; 
-        this.editPriority = false;
-      }
-      this.showPriorityBox = false; 
-    },
-    toggleDateBox() {
-      this.showDateBox = !this.showDateBox;
-      this.accessDateBox = true;
-    },
-    setDate(date) {
-      const today = new Date();
-      if(date === "Today") { this.listModel.taskdate.setDate(today.getDate()) }
-      if(date === "Tommorow") { this.listModel.taskdate.setDate(today.getDate() + 1) }
-      if(date === "Next Week") { this.listModel.taskdate.setDate(today.getDate() + 7) }
-      if(this.editDate) {
-        this.list.tasks[this.list.currentTaskId].date = this.listModel.taskdate.toDateString(); 
-        this.editDate = false;
-      }
-      this.showDateBox = false;
-    },
-    enableEdit() {
-      this.edit = !this.edit; 
-    },
-    enableEditName(task, tasks) {
-      console.log(task)
-      console.log(tasks)
+    enableEditName(task) {
       if(this.edit) {
-        this.list.currentTaskId = id;
+        this.$store.commit('getEditTask', task);
         this.editName = true;
       }
     },
-    enableEditStatus(id) {
+    async renameTask() {
+      this.task.name = this.listModel.task;
+      await axios.put(`task/${this.task.guid}`, this.task)
+      this.listModel.task = ""; 
+      this.editName = false;
+    },
+    getTaskStatus(task) {
+      if (task.status === 1) {
+        return "Not Finished";
+      } 
+      else if (task.status === 2) {
+        return "In Progress";
+      } 
+      else if (task.status === 3) {
+        return "Completed";
+      }
+      else {
+        return "No Status";
+      }
+    },
+    enableEditStatus(task) {
       if(this.edit) {
-        this.list.currentTaskId = id;
+        this.$store.commit('getEditTask', task);
         this.editStatus = true;
         this.showStatusBox = true;
       }
     },
-    enableEditPriority(id) {
+    async setStatus(status) {
+      this.listModel.taskstatus = status;
+      console.log(this.listModel.taskstatus)
+      if(this.editStatus) {
+        this.task.status = this.listModel.taskstatus; 
+        await axios.put(`task/${this.task.guid}`, this.task)
+        this.editStatus = false;
+      }
+      this.showStatusBox = false; 
+    },
+    getTaskPriority(task) {
+      if (task.priority === 1) {
+        return "Low";
+      }
+      else if (task.priority === 2) {
+        return "Medium";
+      }
+      else if (task.priority === 3) { 
+        return "High";
+      }
+      else {
+        return "No Priority";
+      }
+    },
+    enableEditPriority(task) {
       if(this.edit) {
-        this.list.currentTaskId = id;
+        this.$store.commit('getEditTask', task);
         this.editPriority = true;
         this.showPriorityBox = true;
       }
     },
-    enableEditDate(id) {
+    async setPriority(priority) {
+      this.listModel.taskpriority = priority;
+      if(this.editPriority) {
+        this.task.priority = this.listModel.taskpriority; 
+        await axios.put(`task/${this.task.guid}`, this.task)
+        this.editPriority = false;
+      }
+      this.showPriorityBox = false; 
+    },
+    getTaskDate(task) {
+      if(task.date === null) {
+        return "Unlimited";
+      }
+      const dateFormat = new Intl.DateTimeFormat("de-de", {
+        dateStyle: "short",
+      })
+      return dateFormat.format(new Date(task.date));
+    },
+    enableEditDate(task) {
       if(this.edit) { 
-        this.list.currentTaskId = id;
+        this.$store.commit('getEditTask', task);
         this.editDate = true;
         this.showDateBox = true;
       }
     },
+    async setDate(date) {
+      const today = new Date();
+      if(this.listModel.taskdate === null) { this.listModel.taskdate = today; }
+      if(date === "Unlimited") { this.listModel.taskdate = null; }
+      if(date === "Today") { this.listModel.taskdate.setDate(today.getDate()); }
+      if(date === "Tommorow") { this.listModel.taskdate.setDate(today.getDate() + 1) }
+      if(date === "Next Week") { this.listModel.taskdate.setDate(today.getDate() + 7) }
+      if(this.editDate) {
+        this.task.date = this.listModel.taskdate; 
+        await axios.put(`task/${this.task.guid}`, this.task)
+        this.getTask();
+        this.editDate = false;
+      }
+      this.showDateBox = false;
+    },  
     addFavoriteTask(task) {
       const favoriteTask = {
         id: task.id,
@@ -266,18 +288,47 @@ export default {
     isTaskFavorite(task) {
       // return this.list.favoriteTasks.some((favoriteTask) => favoriteTask.id === task.id);
       return
-    }
+    },
+    redirectToHome() {
+      this.$router.push("/");
+    },
+    enableEdit() {
+      this.edit = !this.edit; 
+    },
+    toggleStatusBox() {
+      this.showStatusBox = !this.showStatusBox;
+    },
+    togglePriorityBox() {
+      this.showPriorityBox = !this.showPriorityBox;
+    },
+    toggleDateBox() {
+      this.showDateBox = !this.showDateBox;
+      this.accessDateBox = true;
+    },
+    scrollToBottom() {
+      const wrapper = this.$refs.wrapper;
+      wrapper.scrollTop = wrapper.scrollHeight;
+    },
   },
   watch: {
-    'listModel.taskdate': { 
-      handler () {
-        this.showDateBox = !this.showDateBox;
-        if(this.edit) {
-          this.list.tasks[this.list.currentTaskId].date = this.listModel.taskdate.toDateString(); 
+    "listModel.taskcalendardate": { 
+      async handler () {
+        this.listModel.taskdate = this.listModel.taskcalendardate;
+        this.showDateBox = false;
+        if(this.editDate) {
+          this.task.date = this.listModel.taskdate; 
+          await axios.put(`task/${this.task.guid}`, this.task)
           this.editDate = false;
         }
       },
     },
+    "listModel.task": {
+      handler () {
+        if(this.listModel.task !== "") {
+          this.scrollToBottom();
+        }
+      }
+    }
   },
   // user view will be at the bottom when he click
   // updated() {
@@ -319,6 +370,7 @@ button {
 }
 .wrapper {
   overflow-y: auto;
+  overflow-x: hidden!important;;
   height: 100vh;
 }
 #table-container {

@@ -11,12 +11,11 @@ namespace TaskTrackerProject.Application.Dto
     public record ListTaskDto(
         Guid Guid,
 
-        [StringLength(20, MinimumLength = 3, ErrorMessage = "name must contain at least 3 letters")]
         string Name,
         Status Status,
         Priority Priority,
         bool IsFavorite,
-        DateTime Date,
+        DateTime? Date,
         Guid ListGuid) : IValidatableObject
     {
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

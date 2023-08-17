@@ -95,7 +95,7 @@ export default {
   },  
   methods: {
     async getList() {
-      try { this.$store.commit('getList', (await axios.get("list")).data); } 
+      try { this.$store.commit('getAllList', (await axios.get("list")).data); } 
       catch (e) { toast.error("Error loading API") }
     },
     toggleSidebar() {
@@ -119,7 +119,7 @@ export default {
         console.log(newList)
         try { 
           await axios.post('list/addlist', newList); 
-          this.getList();
+          this.getList()
           toast.success("New list has been created", { autoClose: 1000});
         } 
         catch (e) {
@@ -145,6 +145,7 @@ export default {
         delete axios.defaults.headers.common['Authorization'];
         this.$store.commit('authenticate', null);
         toast.info("You have logged out", { autoClose: 1000, });
+        this.$router.push("/");
       } 
       else {
         toast.warning("You are not logged in!", { autoClose: 1000, });

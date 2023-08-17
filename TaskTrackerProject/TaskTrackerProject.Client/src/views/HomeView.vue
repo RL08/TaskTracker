@@ -44,7 +44,7 @@ export default {
   },
   methods: {
     async getList() {
-      try { this.$store.commit('getList', (await axios.get("list")).data); } 
+      try { this.$store.commit('getAllList', (await axios.get("list")).data); } 
       catch (e) { toast.error("Error loading API") }
     },
     redirectTo(list) {

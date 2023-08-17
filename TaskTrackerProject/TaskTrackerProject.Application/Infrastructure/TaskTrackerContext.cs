@@ -78,7 +78,7 @@ namespace TaskTrackerProject.Application.Infrastructure
                 priority: Priority.Low, 
                 isfavorite: false,
                 list: userlist, 
-                date: new DateTime()
+                date: null
             );
             await Tasks.AddAsync(task);
             await SaveChangesAsync();
@@ -130,7 +130,7 @@ namespace TaskTrackerProject.Application.Infrastructure
                     priority: Priority.Low,
                     isfavorite: false,
                     list: lists[0],
-                    date: new DateTime())
+                    date: null)
                 { Guid = f.Random.Guid() };
             })
             .Generate(10)
