@@ -17,14 +17,22 @@ import 'vue3-toastify/dist/index.css';
             <th>Status</th>
             <th>Priority</th>
             <th>Progress</th>
+            <th> Options </th>
           </tr>
         </thead>
-        <tbody v-for="list in lists" :key="list.id" @click="redirectTo(list)">
+        <tbody v-for="list in lists" :key="list.id">
           <tr>
-            <td> {{ list.name }} </td>
-            <td> {{ getListStatus(list) }} </td>
-            <td> {{ getListPriority(list) }} </td>
-            <td> <progress :value="getCompletedTaskCount(list)" :max="list.tasks.length"> </progress> </td> 
+            <td v-if="edit && list.guid === this.editListGuid"> 
+              <input id="rename" type="text" required placeholder="Rename List" v-model="newName" @keyup.enter=renameList(list)> 
+            </td>
+            <td v-else @click="redirectTo(list)"> {{ list.name }} </td>
+            <td @click="redirectTo(list)"> {{ getListStatus(list) }} </td>
+            <td @click="redirectTo(list)"> {{ getListPriority(list) }} </td>
+            <td @click="redirectTo(list)"> <progress :value="getCompletedTaskCount(list)" :max="list.tasks.length"> </progress> </td> 
+            <td> 
+              <font-awesome-icon class="icon" :class="{ 'true': edit }" icon="fa-solid fa-pen" @click="enableEdit(list)"/> 
+              <font-awesome-icon class="icon" icon="fa-solid fa-trash" @click="deleteList(list)"/> 
+            </td>
           </tr>
         </tbody>
       </table>
@@ -41,11 +49,25 @@ export default {
     lists() { 
       return this.$store.state.user.lists; 
     },
+    list() {
+      return this.$store.state.user.currentList;
+    },
+  },
+  data() {
+    return {
+      edit: false,
+      editListGuid: null,
+      newName: "",
+    }
   },
   methods: {
     async getList() {
       try { this.$store.commit('getAllList', (await axios.get("list")).data); } 
       catch (e) { toast.error("Error loading API") }
+    },
+    async deleteList(list) {
+      this.$store.commit('deleteList', list);
+      await axios.delete(`list/${list.guid}`, list.guid); 
     },
     redirectTo(list) {
       this.$store.commit('setCurrentListGuid', list.guid);
@@ -81,6 +103,16 @@ export default {
     },
     getCompletedTaskCount(list) {
       return list.tasks.filter((task) => task.status === 3).length;
+    },
+    enableEdit(list) {
+      this.edit = !this.edit; 
+      this.editListGuid = list.guid;
+    },
+    async renameList(list) {
+      list.name = this.newName;
+      await axios.put(`list/${list.guid}`, list)
+      this.newName = ""; 
+      this.edit = false;
     },
   },
 };
@@ -130,6 +162,23 @@ tbody {
 tbody:hover {
   background-color: lightgrey;
 }
+input {
+  width: 100%;
+  border: 0;
+}
+.icon {
+  margin: 0 10px 0 10px;
+  padding: 5px;
+}
+#icon {
+  margin: 0 10px 0 0;
+}
+.icon:hover {
+  background-color: lightgrey;
+}
+.icon.true {
+  color: turquoise;
+}
 @media screen and (max-width: 280px) {  
   .wrapper {
     font-size: 11px;
@@ -150,5 +199,3 @@ tbody:hover {
   }
 }
 </style>
-
-

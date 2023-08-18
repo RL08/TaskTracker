@@ -67,8 +67,6 @@ import axios from "axios";
         <font-awesome-icon class="icon" id="icon" icon="fa-solid fa-battery-quarter" @click="toggleStatusBox()" />
         <font-awesome-icon class="icon" icon="fa-solid fa-triangle-exclamation" @click="togglePriorityBox()" /> 
         <font-awesome-icon class="icon" icon="fa fa-calendar" @click="toggleDateBox()"/> 
-        <font-awesome-icon class="icon" icon="fa-solid fa-clock" /> 
-        <!-- <font-awesome-icon class="icon" icon="fa-solid fa-repeat" />  -->
       </div>
     </div>
     <div class="container" id="input-container" v-if="!editName">
@@ -91,6 +89,9 @@ export default {
     },
     task() {
       return this.$store.state.user.currentTask;
+    },
+    favtasks() {
+      return this.$store.state.user.favTasks;
     },
     lists() {
       return this.$store.state.user.lists;
@@ -264,30 +265,20 @@ export default {
       }
       this.showDateBox = false;
     },  
-    addFavoriteTask(task) {
-      const favoriteTask = {
-        id: task.id,
-        name: task.name,
-        status: task.status,
-        priority: task.priority,
-        date: task.date, 
-        favorite: task.favorite,
-      };
-      if(!task.favorite) {
-        this.$store.commit("addFavoriteTask", favoriteTask);
-        task.favorite = true;
-        toast.info("Favorite Task marked", { autoClose: 1000, });
+    async addFavoriteTask(task) {
+      if(!task.isFavorite) {
+        task.isFavorite = true; 
+        this.$store.commit("addFavTask", task);
       }
       else {
-        this.$store.commit("deleteFavoriteTask", favoriteTask);
-        task.favorite = false;
-        toast.info("Favorite Task unmarked", { autoClose: 1000, });
+        task.isFavorite = false; 
+        this.$store.commit("delFavTask", task);
       }
+      await axios.put(`task/${task.guid}`, task)
       // console.log(this.list.favoriteTasks);
     },
     isTaskFavorite(task) {
-      // return this.list.favoriteTasks.some((favoriteTask) => favoriteTask.id === task.id);
-      return
+      return this.favtasks.some((favoriteTask) => favoriteTask.guid === task.guid);
     },
     redirectToHome() {
       this.$router.push("/");

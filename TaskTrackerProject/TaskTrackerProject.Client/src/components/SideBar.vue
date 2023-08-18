@@ -116,7 +116,6 @@ export default {
           name: this.listname ? this.listname : "Unknown list",
           userguid: this.$store.state.user.guid
         };
-        console.log(newList)
         try { 
           await axios.post('list/addlist', newList); 
           this.getList()

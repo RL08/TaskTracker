@@ -9,6 +9,7 @@ export default createStore({
         isLoggedIn: false,
         lists: [],
         tasks: [],
+        favTasks: [],
         currentListGuid: null,
         currentTask: null,
       }
@@ -34,6 +35,9 @@ export default createStore({
       }   
       state.user.lists = userListArray; 
     },
+    deleteList(state, list) {
+      state.user.lists = state.user.lists.filter(dellist => dellist.guid !== list.guid);
+    },
     async getTask(state, taskData) {
       const userTaskArray = [];
       for(let taskId in taskData) {
@@ -54,6 +58,12 @@ export default createStore({
     },    
     getEditTask(state, task) {
       state.user.currentTask = task;
+    },
+    addFavTask(state, task) {
+      state.user.favTasks.push(task); 
+    },
+    delFavTask(state, task) {
+      state.user.favTasks = state.user.favTasks.filter(deltask => deltask.guid !== task.guid); 
     },
   }
 });
