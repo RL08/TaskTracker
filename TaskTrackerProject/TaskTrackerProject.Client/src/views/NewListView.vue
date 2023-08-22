@@ -14,7 +14,7 @@ import axios from "axios";
     </div>
     <h1> {{ lists.name }} </h1>
     <div class="container" id="table-container">
-      <table class="table table-bordered">
+      <table class="table">
         <thead>
           <tr>
             <th> Task </th>
@@ -26,11 +26,11 @@ import axios from "axios";
         </thead>
         <tbody v-for="task in tasks" :key="task.id">
           <tr>
-            <td @click="enableEditName(task)"> {{ task.name }} </td>
-            <td @click="enableEditStatus(task)"> {{ getTaskStatus(task) }} </td>
-            <td @click="enableEditPriority(task)"> {{ getTaskPriority(task) }} </td>
-            <td @click="enableEditDate(task)"> {{ getTaskDate(task) }} </td>
-            <td> 
+            <td data-label="Task" @click="enableEditName(task)"> {{ task.name }} </td>
+            <td data-label="Status" @click="enableEditStatus(task)"> {{ getTaskStatus(task) }} </td>
+            <td data-label="Priority" @click="enableEditPriority(task)"> {{ getTaskPriority(task) }} </td>
+            <td data-label="Date" @click="enableEditDate(task)"> {{ getTaskDate(task) }} </td>
+            <td data-label="Options" > 
               <font-awesome-icon class="icon" :class="{ 'true': edit }" icon="fa-solid fa-pen" @click="enableEdit()"/> 
               <font-awesome-icon class="icon" icon="fa-solid fa-trash" @click="deleteTask(task)"/> 
               <font-awesome-icon class="icon" :class="{ 'true': isTaskFavorite(task) }" icon="fa-solid fa-star" @click="addFavoriteTask(task)"/> 
@@ -329,18 +329,27 @@ export default {
 </script>
 
 <style scoped>
+.wrapper {
+  overflow-y: auto;
+  overflow-x: hidden!important;;
+  height: 100vh;
+}
 h1 {
   color: black;
   margin: 80px 0 10px 200px;
   text-align: center;
+  font-size: 2em;
 }
 .container {
   display: flex;
   justify-content: center; 
+  width: inherit;
+  margin-left: 200px;
+  padding: 0 10%;
 }
 #button-container {
-  margin-left: 200px;
   justify-content: left;
+  position: relative;
 }
 button {
   border-radius: 6px;
@@ -359,17 +368,11 @@ button {
 #back:hover {
   background-color: lightgrey;
 }
-.wrapper {
-  overflow-y: auto;
-  overflow-x: hidden!important;;
-  height: 100vh;
-}
-#table-container {
-  margin: 0 0 10px 200px;
-}
 table {
-  background-color: white;
   width: 70vw;
+}
+tr {
+  background: white;
 }
 table, th, td {
   border:1px solid black;
@@ -379,17 +382,18 @@ th, td {
   width: 100vh;
   text-align: center;
 }
-thead {
+thead tr{
   background-color: turquoise;
 }
 tbody {
   cursor: pointer;
 }
-td:hover {
+tbody tr td:hover {
   background-color: lightgrey;
 }
 #input-container {
-  margin: 5px 0 10px 200px;
+  margin-bottom: 10px;
+  margin-top: 5px;
 }
 input {
   display: flex;
@@ -407,10 +411,10 @@ input::placeholder {
   margin-top: 10px;
 }
 #icon-container {
-  margin: 5px 0 0 200px;
+  margin-top: 5px;
 }
 #fa-icon-container {
-  margin: 10px 0 0 200px;
+  margin-top: 10px;
 }
 .icon-box {
   display: flex;
@@ -422,11 +426,11 @@ input::placeholder {
 	border-radius: 6px;
 }
 .icon {
-  margin: 0 10px 0 10px;
+  margin: 0 10px;
   padding: 5px;
 }
 #icon {
-  margin: 0 10px 0 0;
+  margin-right: 10px;
 }
 .icon:hover {
   background-color: lightgrey;
@@ -437,31 +441,63 @@ input::placeholder {
 #datepicker {
   justify-content: right;
 }
-@media screen and (max-width: 280px) {  
+@media screen and (min-width: 280px) {  
   .wrapper {
-    font-size: 11px;
+    font-size: 1rem;
   }
 }
-@media screen and (min-height: 1024px) {  
+@media screen and (min-height: 892px) {  
   .wrapper {
-    font-size: 24px;
+    font-size: 1.4rem;
   }
 }
-@media screen and (max-width: 1000px) {
-  #input-container, 
-  #table-container, 
-  #icon-container, 
-  #fa-icon-container, 
-  .container,
+@media screen and (max-width: 912px) {
   h1 {
-    margin-left: auto;
-    margin-right: auto;
+    margin: 80px auto 10px;
+  }
+  .container{
+    margin: 0 auto;
+    padding: 0;
   }
   #button-container {
     margin: 10px 0 0 40px;
   }
   input, table, .icon-box {
     width: 100vw;
+  }
+  table {
+    border-collapse: collapse;
+    border: 0;
+  }
+  thead {
+    display: none;
+  }
+  table, tbody, tr, td {
+    display: block;
+    width: 100%;
+  }
+  tr {
+    margin: 0 0 15px 0;
+    border: 1px solid black;
+  }
+  tbody tr td:nth-child(even) {
+    background-color: turquoise;
+  }
+  tbody tr td:nth-child(even):hover {
+    background-color: lightgrey;
+  }
+  td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+  td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 15px;
+    text-align: left;
   }
 }
 </style>

@@ -9,6 +9,9 @@ import 'vue3-toastify/dist/index.css';
   <button class="navbar-toggler" id="first-navbar-toggler" :class="{ 'true': showNavbar }" @click="toggleSidebar()">
     <font-awesome-icon id="bar" icon="fa-bars"/>
   </button>
+  <button class="scrolldown" :class="{ 'true': showNavbar }" @click="scrollToBottom()">
+    <font-awesome-icon id="bar" icon="fa-arrow-down"/>
+  </button>
   <nav id="sidebar" :class="{ 'true': showSidebar }">
     <button class="navbar-toggler" :class="{ 'true': showNavbar }" @click="toggleSidebar()">
       <font-awesome-icon id="bar" icon="fa-bars"/>
@@ -33,7 +36,7 @@ import 'vue3-toastify/dist/index.css';
       </div>
       <ul class="list-unstyled">
         <li>
-          <router-link to="/" class="nav-link"> 
+          <router-link to="/" class="nav-link" @click="toggleSidebar()"> 
             <font-awesome-icon class="icon" icon="fa-list"/> All List
           </router-link>
         </li>
@@ -150,6 +153,9 @@ export default {
         toast.warning("You are not logged in!", { autoClose: 1000, });
       }
     },
+    scrollToBottom() {
+      window.scrollTo(0,0);
+    }
   },
 }
 </script>
@@ -226,14 +232,27 @@ input {
 .navbar-toggler {
   margin: 30px 0 0 10px;
   display: none;
+  z-index: 2;
 }
-@media screen and (max-width: 1000px) {
+.scrolldown {
+  z-index: 2;
+  display: none;
+}
+@media screen and (max-width: 912px) {
   #first-navbar-toggler {
     display: block;
     position: absolute;
   }
   .navbar-toggler {
     display: block;
+  }
+  .scrolldown {
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 30px;
+    background-color: transparent;
+    border: 0;
   }
   #bar {
     border: 2px solid black;
@@ -247,6 +266,7 @@ input {
     background-color: transparent;
     display: none;
     width: 100vw;
+    z-index: 1;
   }
 }
 .sidebar-header.true {

@@ -10,26 +10,26 @@ import 'vue3-toastify/dist/index.css';
     <SideBar/>
     <h1>All List</h1>
     <div class="container">
-      <table class="table table-bordered">
+      <table class="table">
         <thead>
           <tr>
-            <th>List</th>
-            <th>Status</th>
-            <th>Priority</th>
-            <th>Progress</th>
+            <th> List </th>
+            <th> Status </th>
+            <th> Priority </th>
+            <th> Progress </th>
             <th> Options </th>
           </tr>
         </thead>
         <tbody v-for="list in lists" :key="list.id">
           <tr>
-            <td v-if="edit && list.guid === this.editListGuid"> 
+            <td data-label="" v-if="edit && list.guid === this.editListGuid"> 
               <input id="rename" type="text" required placeholder="Rename List" v-model="newName" @keyup.enter=renameList(list)> 
             </td>
-            <td v-else @click="redirectTo(list)"> {{ list.name }} </td>
-            <td @click="redirectTo(list)"> {{ getListStatus(list) }} </td>
-            <td @click="redirectTo(list)"> {{ getListPriority(list) }} </td>
-            <td @click="redirectTo(list)"> <progress :value="getCompletedTaskCount(list)" :max="list.tasks.length"> </progress> </td> 
-            <td> 
+            <td data-label="List" v-else @click="redirectTo(list)"> {{ list.name }} </td>
+            <td data-label="Status" @click="redirectTo(list)"> {{ getListStatus(list) }} </td>
+            <td data-label="Priority" @click="redirectTo(list)"> {{ getListPriority(list) }} </td>
+            <td data-label="Progress" @click="redirectTo(list)"> <progress :value="getCompletedTaskCount(list)" :max="list.tasks.length"> </progress> </td> 
+            <td data-label="Options"> 
               <font-awesome-icon class="icon" :class="{ 'true': edit }" icon="fa-solid fa-pen" @click="enableEdit(list)"/> 
               <font-awesome-icon class="icon" icon="fa-solid fa-trash" @click="deleteList(list)"/> 
             </td>
@@ -127,16 +127,21 @@ export default {
 .container {
   display: flex;
   justify-content: center; 
+  width: inherit;
   margin-left: 200px;
+  padding: 0 10%;
 }
 h1 {
   color: black;
   margin: 80px 0 10px 200px;
   text-align: center;
+  font-size: 2em;
 }
 table {
-  background-color: white;
   width: 70vw;
+}
+tr {
+  background: white;
 }
 table, th, td {
   border:1px solid black;
@@ -146,11 +151,11 @@ th, td {
   width: 100vh;
   text-align: center;
 }
-thead {
+thead tr{
   background-color: turquoise;
 }
-tbody {
-  cursor: pointer;
+tbody tr td:hover {
+  background-color: lightgrey;
 }
 progress {
   width: 100%;
@@ -158,9 +163,6 @@ progress {
 }
 tbody {
   cursor: pointer;
-}
-tbody:hover {
-  background-color: lightgrey;
 }
 input {
   width: 100%;
@@ -179,23 +181,62 @@ input {
 .icon.true {
   color: turquoise;
 }
-@media screen and (max-width: 280px) {  
+@media screen and (min-width: 280px) {  
   .wrapper {
-    font-size: 11px;
+    font-size: 1rem;
   }
 }
-@media screen and (min-height: 1024px) {  
+@media screen and (min-height: 892px) {  
   .wrapper {
-    font-size: 24px;
+    font-size: 1.4rem;
   }
 }
-@media screen and (max-width: 1000px) {
-  .container, 
+@media screen and (max-width: 912px) {
   h1 {
-    margin-left: auto;
+    margin: 80px auto 10px;
+  }
+  .container{
+    margin: 0 auto;
+    padding: 0;
   }
   table {
-    width: 100vw;
+    border-collapse: collapse;
+    border: 0;
+  }
+  thead {
+    display: none;
+  }
+  table, tbody, tr, td {
+    display: block;
+    width: 100%;
+  }
+  tr {
+    margin: 0 0 15px 0;
+    border: 1px solid black;
+  }
+  tbody tr td:nth-child(even) {
+    background-color: turquoise;
+  }
+  tbody tr td:nth-child(even):hover {
+    background-color: lightgrey;
+  }
+  td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+  td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 15px;
+    text-align: left;
+  }
+  progress {
+    width: 50%;
+    vertical-align: middle;
+    padding: 15px;
   }
 }
 </style>
