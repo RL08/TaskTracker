@@ -75,6 +75,12 @@ import axios from "axios";
     <div class="container" id="input-container" v-if="editName">
       <input id="rename" type="text" required placeholder="Rename Task" v-model="listModel.task" @keyup.enter=renameTask()> 
     </div>
+    <button v-if="!change" class="scrolldown" @click="scrollToBottom()">
+			<font-awesome-icon id="bar" icon="fa-arrow-down"/>
+    </button>
+    <button v-if="change" class="scrolldown" @click="scrollToTop()">
+			<font-awesome-icon id="bar" icon="fa-arrow-up"/>
+    </button>
   </div>
 </template>
 
@@ -119,6 +125,7 @@ export default {
       editPriority: false,
       editDate: false,
       favorite: false,
+      change: false,
 		}
 	},
   components: {
@@ -299,7 +306,13 @@ export default {
     scrollToBottom() {
       const wrapper = this.$refs.wrapper;
       wrapper.scrollTop = wrapper.scrollHeight;
+      this.change = true;
     },
+    scrollToTop() {
+      const wrapper = this.$refs.wrapper;
+      wrapper.scrollTop = 0;
+      this.change = false;
+    }
   },
   watch: {
     "listModel.taskcalendardate": { 
@@ -313,18 +326,12 @@ export default {
         }
       },
     },
-    "listModel.task": {
-      handler () {
-        if(this.listModel.task !== "") {
-          this.scrollToBottom();
-        }
-      }
-    }
   },
-  // user view will be at the bottom when he click
-  // updated() {
-  //   this.scrollToBottom();
-  // }
+  updated() {
+    if(this.change) {
+      this.scrollToBottom();
+    }
+  }
 }
 </script>
 
@@ -440,6 +447,17 @@ input::placeholder {
 }
 #datepicker {
   justify-content: right;
+}
+.scrolldown {
+  z-index: 2;
+  display: block;
+  position: absolute;
+  right: 10px;
+  bottom: 16px;
+  border-radius: 50%;
+  width: inherit;
+  padding: 1px 6px;
+  margin: 0;
 }
 @media screen and (min-width: 280px) {  
   .wrapper {

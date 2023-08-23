@@ -9,9 +9,6 @@ import 'vue3-toastify/dist/index.css';
   <button class="navbar-toggler" id="first-navbar-toggler" :class="{ 'true': showNavbar }" @click="toggleSidebar()">
     <font-awesome-icon id="bar" icon="fa-bars"/>
   </button>
-  <button class="scrolldown" :class="{ 'true': showNavbar }" @click="scrollToBottom()">
-    <font-awesome-icon id="bar" icon="fa-arrow-down"/>
-  </button>
   <nav id="sidebar" :class="{ 'true': showSidebar }">
     <button class="navbar-toggler" :class="{ 'true': showNavbar }" @click="toggleSidebar()">
       <font-awesome-icon id="bar" icon="fa-bars"/>
@@ -234,10 +231,6 @@ input {
   display: none;
   z-index: 2;
 }
-.scrolldown {
-  z-index: 2;
-  display: none;
-}
 @media screen and (max-width: 912px) {
   #first-navbar-toggler {
     display: block;
@@ -258,6 +251,7 @@ input {
     border: 2px solid black;
     border-radius: 50%;
     padding: 10px;
+    background: lightgrey;
   }
   .sidebar-header {
     display: none;

@@ -2,9 +2,9 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faArrowDown, faArrowLeft, faArrowRight, faBars, faBatteryQuarter, faCalendar, faCaretLeft, faCheck, faClock, faList, faListCheck, faPen, faPlus, faRepeat, faRightFromBracket, faStar, faTrash, faTriangleExclamation,} from '@fortawesome/free-solid-svg-icons'
+import { faArrowDown, faArrowLeft, faArrowRight, faArrowUp, faBars, faBatteryQuarter, faCalendar, faCaretLeft, faCheck, faClock, faList, faListCheck, faPen, faPlus, faRepeat, faRightFromBracket, faStar, faTrash, faTriangleExclamation,} from '@fortawesome/free-solid-svg-icons'
 library.add(faList, faPlus, faBars, faArrowRight, faArrowLeft, faCheck, faRightFromBracket, faMicrosoft, faListCheck, faCalendar, faClock, 
-            faRepeat, faBatteryQuarter, faTriangleExclamation, faCaretLeft, faPen, faTrash, faStar, faArrowDown)
+            faRepeat, faBatteryQuarter, faTriangleExclamation, faCaretLeft, faPen, faTrash, faStar, faArrowDown, faArrowUp)
 import axios from "axios";
 import process from 'node:process'
 import router from './router'

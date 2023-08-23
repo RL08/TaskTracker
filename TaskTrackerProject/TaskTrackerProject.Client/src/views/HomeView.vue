@@ -6,7 +6,7 @@ import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
-  <div class="wrapper">
+  <div class="wrapper" ref="wrapper">
     <SideBar/>
     <h1>All List</h1>
     <div class="container">
@@ -37,6 +37,12 @@ import 'vue3-toastify/dist/index.css';
         </tbody>
       </table>
     </div>
+    <button class="scrolldown" @click="scrollToBottom()">
+			<font-awesome-icon id="bar" icon="fa-arrow-down"/>
+    </button>
+    <button v-if="change" class="scrolldown" @click="scrollToTop()">
+			<font-awesome-icon id="bar" icon="fa-arrow-up"/>
+    </button>
   </div>
 </template>
 
@@ -58,6 +64,7 @@ export default {
       edit: false,
       editListGuid: null,
       newName: "",
+      change: false,
     }
   },
   methods: {
@@ -114,6 +121,16 @@ export default {
       this.newName = ""; 
       this.edit = false;
     },
+    scrollToBottom() {
+      const wrapper = this.$refs.wrapper;
+      wrapper.scrollTop = wrapper.scrollHeight;
+      this.change = true;
+    },
+    scrollToTop() {
+      const wrapper = this.$refs.wrapper;
+      wrapper.scrollTop = 0;
+      this.change = false;
+    }
   },
 };
 </script>
@@ -180,6 +197,14 @@ input {
 }
 .icon.true {
   color: turquoise;
+}
+.scrolldown {
+  z-index: 2;
+  display: block;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  border-radius: 50%;
 }
 @media screen and (min-width: 280px) {  
   .wrapper {
