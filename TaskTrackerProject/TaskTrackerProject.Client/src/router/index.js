@@ -13,17 +13,14 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/alllist',
-      name: 'alllist',
-      component: HomeView
+      component: HomeView,
+      meta: { authorize: true },
     },
     {
       path: '/list/:listguid',
       name: 'newlist/:listguid',
-      component: NewListView
+      component: NewListView,
+      meta: { authorize: true },
     },
     {
       path: '/signin',
@@ -46,8 +43,13 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authenticated = store.state.user.isLoggedIn;
   if (to.meta.authorize && !authenticated) {
-    next("/");
+    next("/signup");
     return;
+  }
+// If the user wants to switch to another list while remaining on the current list, the tasks won't be refreshed.
+// This code is responsible for refreshing the tasks.
+  if (from.params.listguid !== undefined && to.params.listguid !== from.params.listguid) {
+    store.commit('getTask', store.state.user.userTasks);
   }
   next();
   return;

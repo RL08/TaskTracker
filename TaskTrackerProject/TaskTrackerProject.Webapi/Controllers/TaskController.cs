@@ -46,7 +46,10 @@ namespace TaskTrackerProject.Webapi.Controllers
                     a.Date,
                     ListGuid = a.List.Guid,
                     a.ListId,
-                    ListName = a.List.Name
+                    ListName = a.List.Name,
+                    a.List.UserId,
+                    UserGuid = a.List.User.Guid,
+                    UserUsername = a.List.User.Username,
                 }).ToListAsync();
             return Ok(tasks);
         }
@@ -71,7 +74,10 @@ namespace TaskTrackerProject.Webapi.Controllers
                     a.Date,
                     ListGuid = a.List.Guid,
                     a.ListId,
-                    ListName = a.List.Name
+                    ListName = a.List.Name,
+                    a.List.UserId,
+                    UserGuid = a.List.User.Guid,
+                    UserUsername = a.List.User.Username,
                 })
                 .FirstOrDefaultAsync(a => a.Guid == guid);
             if (task is null) { return NotFound(); }

@@ -27,8 +27,19 @@ import axios from "axios";
         <tbody v-for="task in tasks" :key="task.id">
           <tr>
             <td data-label="Task" @click="enableEditName(task)"> {{ task.name }} </td>
-            <td data-label="Status" @click="enableEditStatus(task)"> {{ getTaskStatus(task) }} </td>
-            <td data-label="Priority" @click="enableEditPriority(task)"> {{ getTaskPriority(task) }} </td>
+            <td data-label="Status" 
+                @click="enableEditStatus(task)"
+                :class="{ 'bg-red': task.status === 1, 'bg-yellow': task.status === 2, 'bg-green': task.status === 3 }"
+            > 
+                {{ getTaskStatus(task) }} 
+            </td>
+            <td 
+              data-label="Priority" 
+              @click="enableEditPriority(task)"
+              :class="{ 'bg-red': task.priority === 1, 'bg-yellow': task.priority === 2, 'bg-green': task.priority === 3 }"
+            > 
+                {{ getTaskPriority(task) }} 
+            </td>
             <td data-label="Date" @click="enableEditDate(task)"> {{ getTaskDate(task) }} </td>
             <td data-label="Options" > 
               <font-awesome-icon class="icon" :class="{ 'true': edit }" icon="fa-solid fa-pen" @click="enableEdit()"/> 
@@ -105,6 +116,9 @@ export default {
     tasks() {
       return this.$store.state.user.tasks;
     },
+    userTasks() {
+      return this.$store.state.user.userTasks;
+    },
   },
   data() {
 		return {
@@ -132,9 +146,8 @@ export default {
     Calendar,
   },
   methods: {
-    async getTask() {
-      try { this.$store.commit('getTask', (await axios.get("task")).data); } 
-      catch (e) { toast.error("Error loading API") }
+    async getTask() { 
+      this.$store.commit('getTask', this.userTasks);
     },
     async addTask() {
       if(this.listModel.task !== "") {
@@ -185,6 +198,7 @@ export default {
         return "Not Finished";
       } 
       else if (task.status === 2) {
+        console.log(task.status)
         return "In Progress";
       } 
       else if (task.status === 3) {
@@ -203,7 +217,6 @@ export default {
     },
     async setStatus(status) {
       this.listModel.taskstatus = status;
-      console.log(this.listModel.taskstatus)
       if(this.editStatus) {
         this.task.status = this.listModel.taskstatus; 
         await axios.put(`task/${this.task.guid}`, this.task)
@@ -267,7 +280,6 @@ export default {
       if(this.editDate) {
         this.task.date = this.listModel.taskdate; 
         await axios.put(`task/${this.task.guid}`, this.task)
-        this.getTask();
         this.editDate = false;
       }
       this.showDateBox = false;
@@ -317,7 +329,8 @@ export default {
   watch: {
     "listModel.taskcalendardate": { 
       async handler () {
-        this.listModel.taskdate = this.listModel.taskcalendardate;
+        if(this.listModel.taskdate === null) { this.listModel.taskdate = new Date(); }
+        this.listModel.taskdate.setDate(this.listModel.taskcalendardate.getDate());
         this.showDateBox = false;
         if(this.editDate) {
           this.task.date = this.listModel.taskdate; 
@@ -459,6 +472,15 @@ input::placeholder {
   padding: 1px 6px;
   margin: 0;
 }
+.bg-red {
+  background-color: rgb(242, 132, 132);
+}
+.bg-yellow {
+  background-color: rgb(223, 244, 117);
+}
+.bg-green {
+  background-color: rgb(117, 244, 164);
+}
 @media screen and (min-width: 280px) {  
   .wrapper {
     font-size: 1rem;
@@ -497,9 +519,6 @@ input::placeholder {
   tr {
     margin: 0 0 15px 0;
     border: 1px solid black;
-  }
-  tbody tr td:nth-child(even) {
-    background-color: turquoise;
   }
   tbody tr td:nth-child(even):hover {
     background-color: lightgrey;

@@ -9,6 +9,7 @@ export default createStore({
         isLoggedIn: false,
         lists: [],
         tasks: [],
+        userTasks: [],
         favTasks: [],
         currentListGuid: null,
         currentTask: null,
@@ -46,6 +47,15 @@ export default createStore({
         }    
       }  
       state.user.tasks = userTaskArray;
+    },
+    async getUserTask(state, taskData) {
+      const userTaskArray = [];
+      for(let taskId in taskData) {
+        if (taskData[taskId].userGuid === state.user.guid) {
+          userTaskArray.push(taskData[taskId]);
+        }    
+      }  
+      state.user.userTasks = userTaskArray;
     },
     addTask(state, task) {
       state.user.tasks.push(task); 

@@ -28,10 +28,10 @@ import 'vue3-toastify/dist/index.css';
           <div id="profile-name">{{ username }}</div> 
         </div>
         <form class="form-inline">
-          <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+          <input class="form-control" type="search" placeholder="Search" aria-label="Search" v-model="searchQuery">
         </form>
       </div>
-      <ul class="list-unstyled">
+      <ul class="list-unstyled" v-if="!searchQuery && authenticated">
         <li>
           <router-link to="/" class="nav-link" @click="toggleSidebar()"> 
             <font-awesome-icon class="icon" icon="fa-list"/> All List
@@ -47,13 +47,23 @@ import 'vue3-toastify/dist/index.css';
           <font-awesome-icon class="icon" icon="fa-plus"/> 
           <input type="text" placeholder="new list" id="list-input" v-model="listname" @keyup.enter="addlist()">
         </li>
-        <li class="nav-link" v-for="list in this.lists" :key="list.id" @click="redirectTo(list)">
+        <li class="nav-link" v-for="list in lists" :key="list.id" @click="redirectTo(list)">
           <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ list.name }}
         </li>
         <li>
           <div class="nav-link" id="logout" @click="logout()">
             <font-awesome-icon class="icon" icon="fa-right-from-bracket"/> Logout
           </div>
+        </li>
+      </ul>
+      <ul class="list-unstyled" v-else-if="searchQuery">
+        <label>List:</label> 
+        <li class="nav-link" v-for="list in filteredLists" :key="list.id" @click="redirectTo(list)">
+          <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ list.name }}
+        </li>
+        <label>Task:</label> 
+        <li class="nav-link" v-for="task in filteredTasks" :key="task.id" @click="redirectToTask(task)">
+          <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ task.name }}
         </li>
       </ul>
     </div>
@@ -64,6 +74,7 @@ import 'vue3-toastify/dist/index.css';
 export default {
   async mounted() {
     await this.getList();
+    await this.getTask();
   },
   computed: {
     authenticated() {
@@ -75,9 +86,21 @@ export default {
     lists() {
       return this.$store.state.user.lists;
     },
+    tasks() {
+      return this.$store.state.user.tasks;
+    },
+    userTasks() {
+      return this.$store.state.user.userTasks;
+    },
     isDevelopment() {
       return process.env.NODE_ENV === 'development';
-    }
+    },
+    filteredLists() {
+      return this.lists.filter((list) => list.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
+    },
+    filteredTasks() {
+      return this.userTasks.filter((task) => task.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
+    },
   },
   data() {
     return {
@@ -88,6 +111,7 @@ export default {
       showSidebar: false,
       showNavbar: false,
       showInput: false,
+      searchQuery: null,
     };
   }, 
   components: {
@@ -96,6 +120,10 @@ export default {
   methods: {
     async getList() {
       try { this.$store.commit('getAllList', (await axios.get("list")).data); } 
+      catch (e) { toast.error("Error loading API") }
+    },
+    async getTask() {
+      try { this.$store.commit('getUserTask', (await axios.get("task")).data); } 
       catch (e) { toast.error("Error loading API") }
     },
     toggleSidebar() {
@@ -108,7 +136,12 @@ export default {
     redirectTo(list) {
       this.toggleSidebar();
       this.$store.commit('setCurrentListGuid', list.guid);
-      this.$router.push(`list/${list.guid}`);
+      this.$router.push(`/list/${list.guid}`);
+    },
+    redirectToTask(task) {
+      this.toggleSidebar();
+      this.$store.commit('setCurrentListGuid', task.listGuid);
+      this.$router.push(`list/${task.listGuid}`);
     },
     async addlist() {
       if (this.authenticated ) {
@@ -171,7 +204,7 @@ export default {
 .icon {
   margin-right: 20px;
 }
-.nav-link {
+.nav-link, label {
   padding: 10px;
   display: flex;
   justify-content: left;
@@ -221,6 +254,9 @@ input {
 #list-input {
   width: 100%;
   padding: 5px 10px;
+}
+label {
+  font-weight: bold;
 }
 /** responsive */
 #first-navbar-toggler {

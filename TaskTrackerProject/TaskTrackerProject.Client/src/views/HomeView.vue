@@ -20,15 +20,37 @@ import 'vue3-toastify/dist/index.css';
             <th> Options </th>
           </tr>
         </thead>
-        <tbody v-for="list in lists" :key="list.id">
-          <tr>
+        <tbody v-for="list in lists" :key="list.id" ref="listItems">
+          <tr
+            :id="'edit-' + list.guid"
+            :style="{ 'background-color': edit && list.guid === editListGuid ? 'lightgrey' : '' }"
+          >
             <td data-label="" v-if="edit && list.guid === this.editListGuid"> 
               <input id="rename" type="text" required placeholder="Rename List" v-model="newName" @keyup.enter=renameList(list)> 
             </td>
             <td data-label="List" v-else @click="redirectTo(list)"> {{ list.name }} </td>
-            <td data-label="Status" @click="redirectTo(list)"> {{ getListStatus(list) }} </td>
-            <td data-label="Priority" @click="redirectTo(list)"> {{ getListPriority(list) }} </td>
-            <td data-label="Progress" @click="redirectTo(list)"> <progress :value="getCompletedTaskCount(list)" :max="list.tasks.length"> </progress> </td> 
+            <td 
+              data-label="Status" 
+              @click="redirectTo(list)"
+              id="status"
+              :class="{ 'bg-red': list.tasks.some((task) => task.status === 1),
+                        'bg-yellow': list.tasks.some((task) => task.status === 2),
+                        'bg-green': list.tasks.some((task) => task.status === 3)}"
+            > 
+              {{ getListStatus(list) }} 
+            </td>
+            <td 
+              data-label="Priority" 
+              @click="redirectTo(list)"
+              :class="{ 'bg-red': list.tasks.some((task) => task.status === 1),
+                        'bg-yellow': list.tasks.some((task) => task.status === 2),
+                        'bg-green': list.tasks.some((task) => task.status === 3)}"
+            > 
+              {{ getListPriority(list) }} 
+            </td>
+            <td data-label="Progress" @click="redirectTo(list)"> 
+              <progress :value="getCompletedTaskCount(list)" :max="list.tasks.length"> </progress> 
+            </td> 
             <td data-label="Options"> 
               <font-awesome-icon class="icon" :class="{ 'true': edit }" icon="fa-solid fa-pen" @click="enableEdit(list)"/> 
               <font-awesome-icon class="icon" icon="fa-solid fa-trash" @click="deleteList(list)"/> 
@@ -78,7 +100,7 @@ export default {
     },
     redirectTo(list) {
       this.$store.commit('setCurrentListGuid', list.guid);
-      this.$router.push(`list/${list.guid}`); 
+      this.$router.push(`/list/${list.guid}`); 
     },
     getListStatus(list) {
       if (list.tasks.some((task) => task.status === 1)) {
@@ -112,7 +134,15 @@ export default {
       return list.tasks.filter((task) => task.status === 3).length;
     },
     enableEdit(list) {
-      this.edit = !this.edit; 
+      if (this.editListGuid) {
+        var previousElement = document.getElementById("edit-" + this.editListGuid);
+        previousElement.style.backgroundColor = '';
+      }
+      var element = document.getElementById("edit-" + list.guid);
+      element.style.backgroundColor = 'lightgrey';
+
+      if(this.editListGuid === list.guid) { this.edit = !this.edit; }
+      else { this.edit = true; }
       this.editListGuid = list.guid;
     },
     async renameList(list) {
@@ -185,6 +215,9 @@ input {
   width: 100%;
   border: 0;
 }
+#rename::placeholder {
+  text-align: center;
+}
 .icon {
   margin: 0 10px 0 10px;
   padding: 5px;
@@ -205,6 +238,15 @@ input {
   right: 10px;
   bottom: 10px;
   border-radius: 50%;
+}
+.bg-red {
+  background-color: rgb(242, 132, 132);
+}
+.bg-yellow {
+  background-color: rgb(223, 244, 117);
+}
+.bg-green {
+  background-color: rgb(117, 244, 164);
 }
 @media screen and (min-width: 280px) {  
   .wrapper {
@@ -238,9 +280,6 @@ input {
   tr {
     margin: 0 0 15px 0;
     border: 1px solid black;
-  }
-  tbody tr td:nth-child(even) {
-    background-color: turquoise;
   }
   tbody tr td:nth-child(even):hover {
     background-color: lightgrey;
