@@ -70,11 +70,11 @@ import axios from "axios";
         <button class="bg-primary" @click="setDate('Today')"> Today </button>
         <button class="bg-primary" @click="setDate('Tommorow')"> Tommorow </button>
         <button class="bg-primary" @click="setDate('Next Week')"> Next Week </button>
-        <Calendar v-model="this.listModel.taskcalendardate" dateFormat="dd/mm/yy" showIcon/>
+        <Calendar v-model="listModel.taskcalendardate" dateFormat="dd/mm/yy" showIcon/>
       </div>
     </div>
-    <div class="container" id="fa-icon-container" v-if="!this.editName">
-      <div class="icon-box" id="fa-icon-box" v-if="this.listModel.task !== ''">
+    <div class="container" id="fa-icon-container" v-if="!editName">
+      <div class="icon-box" id="fa-icon-box" v-if="listModel.task !== ''">
         <font-awesome-icon class="icon" id="icon" icon="fa-solid fa-battery-quarter" @click="toggleStatusBox()" />
         <font-awesome-icon class="icon" icon="fa-solid fa-triangle-exclamation" @click="togglePriorityBox()" /> 
         <font-awesome-icon class="icon" icon="fa fa-calendar" @click="toggleDateBox()"/> 
@@ -87,10 +87,13 @@ import axios from "axios";
       <input id="rename" type="text" required placeholder="Rename Task" v-model="listModel.task" @keyup.enter=renameTask()> 
     </div>
     <button v-if="!change" class="scrolldown" @click="scrollToBottom()">
-			<font-awesome-icon id="bar" icon="fa-arrow-down"/>
+			<font-awesome-icon icon="fa-arrow-down"/>
     </button>
     <button v-if="change" class="scrolldown" @click="scrollToTop()">
-			<font-awesome-icon id="bar" icon="fa-arrow-up"/>
+			<font-awesome-icon icon="fa-arrow-up"/>
+    </button>
+    <button v-if="isDevelopment" id="testtask" class="scrolldown" @click="addDefaultTasks()">
+			<font-awesome-icon icon="fa-plus"/>
     </button>
   </div>
 </template>
@@ -118,6 +121,9 @@ export default {
     },
     userTasks() {
       return this.$store.state.user.userTasks;
+    },
+    isDevelopment() {
+      return process.env.NODE_ENV === 'development';
     },
   },
   data() {
@@ -151,8 +157,7 @@ export default {
     },
     async addTask() {
       if(this.listModel.task !== "") {
-        // if accessDateBox is true -> this.listModel.taskdate
-        // if accessDateBox is false -> null
+        //ternary operator for date
         const newTask = {
           name: this.listModel.task,
           status: this.listModel.taskstatus,
@@ -168,9 +173,8 @@ export default {
           toast.success("New Task has been created", { autoClose: 1000});
         } 
         catch (e) {
-          console.log(e)
           if (e.response.status == 400) {
-            toast.error("BadRequest 400")
+            toast.error("Error 400: Server couldn't understand the request")
           }
         }
         this.accessDateBox = false;
@@ -324,6 +328,12 @@ export default {
       const wrapper = this.$refs.wrapper;
       wrapper.scrollTop = 0;
       this.change = false;
+    },
+    async addDefaultTasks() {
+      for (let i = 1; i <= 10; i++) {
+        this.listModel.task = "Unknown Task"
+        this.addTask(); 
+      } 
     }
   },
   watch: {
@@ -377,12 +387,11 @@ button {
   width: 33%;
   margin-right: 5px;
 }
-#back {
+#back{
   position: absolute;
   border-radius: 6px;
   background-color: white;
   margin: 20px;
-  padding: 5px;
   width: 100px;
 }
 #back:hover {
@@ -471,6 +480,9 @@ input::placeholder {
   width: inherit;
   padding: 1px 6px;
   margin: 0;
+}
+#testtask {
+  right: 40px;
 }
 .bg-red {
   background-color: rgb(242, 132, 132);

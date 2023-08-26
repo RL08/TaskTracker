@@ -45,7 +45,7 @@ import 'vue3-toastify/dist/index.css';
         </li>
         <li id="list-name" class="nav-link" :class="{ 'true': showInput }" >
           <font-awesome-icon class="icon" icon="fa-plus"/> 
-          <input type="text" placeholder="new list" id="list-input" v-model="listname" @keyup.enter="addlist()">
+          <input type="text" placeholder="new list" id="list-input" v-model="listname" @keyup.enter="addList()">
         </li>
         <li class="nav-link" v-for="list in lists" :key="list.id" @click="redirectTo(list)">
           <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ list.name }}
@@ -85,6 +85,9 @@ export default {
     },
     lists() {
       return this.$store.state.user.lists;
+    },
+    listGuid() {
+      return this.$store.state.user.currentListGuid;
     },
     tasks() {
       return this.$store.state.user.tasks;
@@ -141,12 +144,13 @@ export default {
     redirectToTask(task) {
       this.toggleSidebar();
       this.$store.commit('setCurrentListGuid', task.listGuid);
-      this.$router.push(`list/${task.listGuid}`);
+      this.$router.push(`/list/${task.listGuid}`);
     },
-    async addlist() {
-      if (this.authenticated ) {
+    async addList() {
+      if (this.authenticated) {
+        //ternary operator for default list
         const newList = {
-          name: this.listname ? this.listname : "Unknown list",
+          name: this.listname ? this.listname : "Unknown List",
           userguid: this.$store.state.user.guid
         };
         try { 

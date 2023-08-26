@@ -20,12 +20,12 @@ import 'vue3-toastify/dist/index.css';
             <th> Options </th>
           </tr>
         </thead>
-        <tbody v-for="list in lists" :key="list.id" ref="listItems">
+        <tbody v-for="list in lists" :key="list.id">
           <tr
             :id="'edit-' + list.guid"
             :style="{ 'background-color': edit && list.guid === editListGuid ? 'lightgrey' : '' }"
           >
-            <td data-label="" v-if="edit && list.guid === this.editListGuid"> 
+            <td data-label="" v-if="edit && list.guid === editListGuid"> 
               <input id="rename" type="text" required placeholder="Rename List" v-model="newName" @keyup.enter=renameList(list)> 
             </td>
             <td data-label="List" v-else @click="redirectTo(list)"> {{ list.name }} </td>
@@ -81,6 +81,7 @@ export default {
       return this.$store.state.user.currentList;
     },
   },
+  //note: don't use 'this.' in v-if because it will be undefined in production
   data() {
     return {
       edit: false,
@@ -141,7 +142,7 @@ export default {
       var element = document.getElementById("edit-" + list.guid);
       element.style.backgroundColor = 'lightgrey';
 
-      if(this.editListGuid === list.guid) { this.edit = !this.edit; }
+      if(this.editListGuid === list.guid) {  this.edit = !this.edit; }
       else { this.edit = true; }
       this.editListGuid = list.guid;
     },
