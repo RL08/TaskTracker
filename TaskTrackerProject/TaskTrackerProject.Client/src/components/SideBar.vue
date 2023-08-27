@@ -160,7 +160,7 @@ export default {
         } 
         catch (e) {
           if (e.response.status == 400) {
-            toast.error("BadRequest 400")
+            toast.error("Name must atleast contain 3 letters")
           }
         }
         this.listname = "";

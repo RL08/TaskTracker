@@ -184,7 +184,7 @@ input, textarea {
 		font-size: 14px;
 	}
 }
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 912px) {
   .form {
 		margin: 15vh 10px;
 	}

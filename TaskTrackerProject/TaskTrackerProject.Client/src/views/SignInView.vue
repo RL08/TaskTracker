@@ -36,7 +36,7 @@ import SideBar from "../components/SideBar.vue"
           </div>
 					<div class="form-group-icon">
 						<router-link to="/signinspg">
-							<font-awesome-icon id="ms" icon="fa-brands fa-microsoft"/>
+							<img src="@/assets/spg-logo.png" alt="Spengergasse Logo" id="spg">
 						</router-link>
 					</div>
           <button type="submit" class="button">Sign Up</button>
@@ -163,8 +163,11 @@ input, textarea {
 	color: #fff;
 	width: 100%;
 }
-#ms {
+#spg {
 	color: turquoise;
+	width: 1.2em;
+	padding: .35rem;
+	border: 2px solid turquoise;
 }
 @media screen and (max-width: 280px) {  
 	.tab-link {
@@ -185,7 +188,7 @@ input, textarea {
 		font-size: 14px;
 	}
 }
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 912px) {
   .form {
 		margin: 15vh 10px;
 	}
