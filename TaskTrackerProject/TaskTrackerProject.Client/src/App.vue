@@ -1,12 +1,10 @@
 <script setup>
-
 </script>
 
-<template>
+<template id="app">
     <router-view/>
 </template>
 
 <style>
-
 </style>
 

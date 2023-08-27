@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -19,6 +20,10 @@ namespace TaskTrackerProject.Application.Model
             Role = role;
         }
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        protected User() { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; private set; }
@@ -30,6 +35,7 @@ namespace TaskTrackerProject.Application.Model
         public string PasswordHash { get; set; }
         public string Email { get; set; }
         public Userrole Role { get; set; }
+        public List<UserList> Lists { get; } = new();
 
         /// <summary>
         /// takes a password, generates a random salt, and combines it with the password to create a hashed value.
@@ -70,23 +76,16 @@ namespace TaskTrackerProject.Application.Model
         /// <returns>Base64 encoded hash.</returns>
         private string CalculateHash(string password, string salt)
         {
-            if(password is not null)
-            {
-                byte[] saltBytes = Convert.FromBase64String(salt);
-                byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
+            byte[] saltBytes = Convert.FromBase64String(salt);
+            byte[] passwordBytes = System.Text.Encoding.UTF8.GetBytes(password);
 
-                System.Security.Cryptography.HMACSHA256 myHash =
-                    new System.Security.Cryptography.HMACSHA256(saltBytes);
+            System.Security.Cryptography.HMACSHA256 myHash =
+                new System.Security.Cryptography.HMACSHA256(saltBytes);
 
-                byte[] hashedData = myHash.ComputeHash(passwordBytes);
+            byte[] hashedData = myHash.ComputeHash(passwordBytes);
 
-                // Das Bytearray wird als Hexstring zurückgegeben.
-                return Convert.ToBase64String(hashedData);
-            }
-            else
-            {
-                return PasswordHash;
-            }
+            // Das Bytearray wird als Hexstring zurückgegeben.
+            return Convert.ToBase64String(hashedData);
         }
     }
 }

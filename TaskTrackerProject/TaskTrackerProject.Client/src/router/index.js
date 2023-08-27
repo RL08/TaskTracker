@@ -4,7 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import NewListView from '../views/NewListView.vue'
 import SignInView from '../views/SignInView.vue'
 import SignUpView from '../views/SignUpView.vue'
-import SignInMSView from '../views/SignInMSView.vue'
+import SignInSPGView from '../views/SignInSPGView.vue'
 
 
 const router = createRouter({
@@ -13,12 +13,14 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      meta: { authorize: true },
     },
     {
-      path: '/newlist',
-      name: 'newlist',
-      component: NewListView
+      path: '/list/:listguid',
+      name: 'newlist/:listguid',
+      component: NewListView,
+      meta: { authorize: true },
     },
     {
       path: '/signin',
@@ -31,9 +33,9 @@ const router = createRouter({
       component: SignUpView
     },
     {
-      path: '/signinms',
-      name: 'signinms',
-      component: SignInMSView
+      path: '/signinspg',
+      name: 'signinspg',
+      component: SignInSPGView
     },
   ]
 })
@@ -41,8 +43,13 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authenticated = store.state.user.isLoggedIn;
   if (to.meta.authorize && !authenticated) {
-    next("/");
+    next("/signup");
     return;
+  }
+// If the user wants to switch to another list while remaining on the current list, the tasks won't be refreshed.
+// This code is responsible for refreshing the tasks.
+  if (from.params.listguid !== undefined && to.params.listguid !== from.params.listguid) {
+    store.commit('getTask', store.state.user.userTasks);
   }
   next();
   return;
