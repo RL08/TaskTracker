@@ -5,6 +5,18 @@ Started on 1. July 2023 <br>
 TaskTracker is a web-based task management application designed to assist individuals in efficiently organizing their tasks and to-do lists. 
 With its user-friendly interface, TaskTracker simplifies the process of managing tasks, helping users stay organized and productive.
 
+## Features
+1. Task creation and management: Allow users to create, edit, and delete tasks. Each task should include information such as the task name, status, priority level, and due date.
+2. Task lists: Allow users to create multiple lists to better organize their tasks, such as work, personal, shopping, and more. Each list should include information such as the list name, the lowest task status, the lowest task priority level, and the progress in terms of completed tasks.
+3. Priority Levels: Implement a priority system (low, medium, high) for tasks so users can easily identify and focus on important tasks.
+4. Status Levels: Implement a status system (not finished, in progress, completed) for tasks so that users can easily identify and focus on important tasks.
+5. Search and Filtering: Provide search functionality to help users quickly find specific tasks and lists.
+6. Persist data: Tasks and lists are persisted in the database.
+7. Authorization with JWT: Implement a secure user authentication system that requires users to enter their unique credentials (username, password) to access the application. Upon successful login, a JSON Web Token (JWT) is generated and sent to the client. This token contains user-specific information and cannot be manipulated. It is included in future requests to verify the user's identity and grant access to protected resources.
+8. Authenticate using Student Account: Implement a secure user authentication system that requires users to enter their student account information (username, password, email) to access the application. 
+9. Authentication: TaskTracker has a user registration system. New users can provide necessary details such as username, password, and email, which are securely stored in the database. 
+
+If you'd like to see examples of the features mentioned above, you can find them in [Example](https://github.com/RL08/TaskTracker/tree/main/Example/README.md).
 ## Getting Started
 Follow the instructions below to get started with TaskTracker on your local machine.
 
