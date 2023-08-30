@@ -24,7 +24,7 @@ import axios from "axios";
             <th> Options </th>
           </tr>
         </thead>
-        <tbody v-for="task in tasks" :key="task.id">
+        <tbody v-for="task in favtasks" :key="task.id">
           <tr>
             <td data-label="Task" @click="enableEditName(task)"> {{ task.name }} </td>
             <td data-label="Status" 
@@ -44,7 +44,7 @@ import axios from "axios";
             <td data-label="Options" > 
               <font-awesome-icon class="icon" :class="{ 'true': edit }" icon="fa-solid fa-pen" @click="enableEdit()"/> 
               <font-awesome-icon class="icon" icon="fa-solid fa-trash" @click="deleteTask(task)"/> 
-              <font-awesome-icon class="icon" :class="{ 'true': isTaskFavorite(task) }" icon="fa-solid fa-star" @click="addFavoriteTask(task)"/> 
+              <font-awesome-icon class="icon" :class="{ 'true': isTaskFavorite(task) }" icon="fa-solid fa-star" @click="delFavoriteTask(task)"/> 
             </td>
           </tr>
         </tbody>
@@ -102,7 +102,6 @@ import axios from "axios";
 export default {
   async mounted() {
     await this.getTask();
-    await this.getUserTask();
   },
   computed: {
     listGuid() {
@@ -156,10 +155,6 @@ export default {
     async getTask() { 
       this.$store.commit('getTask', this.userTasks);
     },
-    async getUserTask() {
-      try { this.$store.commit('getUserTask', (await axios.get("task")).data); } 
-      catch (e) { toast.error("Error loading API") }
-    },
     async addTask() {
       if(this.listModel.task !== "") {
         //ternary operator for date
@@ -167,7 +162,7 @@ export default {
           name: this.listModel.task,
           status: this.listModel.taskstatus,
           priority: this.listModel.taskpriority,
-          isfavorite: false,
+          isfavorite: true,
           date: this.accessDateBox ? this.listModel.taskdate : null, 
           listGuid: this.listGuid,
         };
@@ -207,6 +202,7 @@ export default {
         return "Not Finished";
       } 
       else if (task.status === 2) {
+        console.log(task.status)
         return "In Progress";
       } 
       else if (task.status === 3) {
@@ -292,17 +288,10 @@ export default {
       }
       this.showDateBox = false;
     },  
-    async addFavoriteTask(task) {
-      if(!task.isFavorite) {
-        task.isFavorite = true; 
-        this.$store.commit("addFavTask", task);
-      }
-      else {
-        task.isFavorite = false; 
-        this.$store.commit("delFavTask", task);
-      }
+    async delFavoriteTask(task) {
+      task.isFavorite = false; 
       await axios.put(`task/${task.guid}`, task)
-      // console.log(this.list.favoriteTasks);
+      this.$store.commit("delFavTask", task);
     },
     isTaskFavorite(task) {
       return this.favtasks.some((favoriteTask) => favoriteTask.guid === task.guid);

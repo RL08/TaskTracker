@@ -100,8 +100,11 @@ export default {
       await axios.delete(`list/${list.guid}`, list.guid); 
     },
     redirectTo(list) {
-      this.$store.commit('setCurrentListGuid', list.guid);
-      this.$router.push(`/list/${list.guid}`); 
+      if(list.name === "Favorite") { this.$router.push("/favorite"); }
+      else {
+        this.$store.commit('setCurrentListGuid', list.guid);
+        this.$router.push(`/list/${list.guid}`); 
+      }
     },
     getListStatus(list) {
       if (list.tasks.some((task) => task.status === 1)) {
@@ -184,7 +187,7 @@ h1 {
   margin: 80px 0 10px 200px;
   text-align: center;
   font-size: 2em;
-}
+}onsole
 table {
   width: 70vw;
 }

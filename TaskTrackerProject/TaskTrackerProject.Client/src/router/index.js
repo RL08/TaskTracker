@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import store from '../store.js'
 import HomeView from '../views/HomeView.vue'
+import FavoriteView from '../views/FavoriteView.vue'
 import NewListView from '../views/NewListView.vue'
 import SignInView from '../views/SignInView.vue'
 import SignUpView from '../views/SignUpView.vue'
@@ -14,6 +15,12 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+      meta: { authorize: true },
+    },
+    {
+      path: '/favorite',
+      name: 'favorite',
+      component: FavoriteView,
       meta: { authorize: true },
     },
     {

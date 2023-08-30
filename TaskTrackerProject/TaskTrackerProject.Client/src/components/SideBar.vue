@@ -6,68 +6,72 @@ import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
-  <button class="navbar-toggler" id="first-navbar-toggler" :class="{ 'true': showNavbar }" @click="toggleSidebar()">
-    <font-awesome-icon id="bar" icon="fa-bars"/>
-  </button>
-  <nav id="sidebar" :class="{ 'true': showSidebar }">
-    <button class="navbar-toggler" :class="{ 'true': showNavbar }" @click="toggleSidebar()">
+  <div class="wrapper">
+    <button class="navbar-toggler" id="first-navbar-toggler" :class="{ 'true': showNavbar }" @click="toggleSidebar()">
       <font-awesome-icon id="bar" icon="fa-bars"/>
     </button>
-    <div class="sidebar-header" :class="{ 'true': showSidebar }">
-      <div class="authentication-container" v-if="!authenticated">
-        <router-link to="/signin" class="nav-link" >
-          <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign in
-        </router-link>
-        <router-link to="/signup" class="nav-link">
-          <font-awesome-icon class="icon" icon="fa-arrow-right"/> Sign up
-        </router-link>
-      </div> 
-      <div class="profile-info">
-        <div class="profile" v-if="authenticated">
-          <ProfileAvatar id="profile" :username="username" size=m></ProfileAvatar> 
-          <div id="profile-name">{{ username }}</div> 
-        </div>
-        <form class="form-inline">
-          <input class="form-control" type="search" placeholder="Search" aria-label="Search" v-model="searchQuery">
-        </form>
-      </div>
-      <ul class="list-unstyled" v-if="!searchQuery && authenticated">
-        <li>
-          <router-link to="/" class="nav-link" @click="toggleSidebar()"> 
-            <font-awesome-icon class="icon" icon="fa-list"/> All List
+    <nav id="sidebar" :class="{ 'true': showSidebar }">
+      <button class="navbar-toggler" :class="{ 'true': showNavbar }" @click="toggleSidebar()">
+        <font-awesome-icon id="bar" icon="fa-bars"/>
+      </button>
+      <div class="sidebar-header" :class="{ 'true': showSidebar }">
+        <div class="authentication-container" v-if="!authenticated">
+          <router-link to="/signin" class="nav-link" >
+            <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign in
           </router-link>
-        </li>
-        <li class="nav-link" @click="showinputfield()">
-          <font-awesome-icon class="icon" icon="fa-plus"/> New List
-        </li>
-        <li class="nav-link" v-if="isDevelopment" @click="addDefaultLists()">
-          <font-awesome-icon class="icon" icon="fa-plus"/> Add 10 Lists
-        </li>
-        <li id="list-name" class="nav-link" :class="{ 'true': showInput }" >
-          <font-awesome-icon class="icon" icon="fa-plus"/> 
-          <input type="text" placeholder="new list" id="list-input" v-model="listname" @keyup.enter="addList()">
-        </li>
-        <li class="nav-link" v-for="list in lists" :key="list.id" @click="redirectTo(list)">
-          <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ list.name }}
-        </li>
-        <li>
-          <div class="nav-link" id="logout" @click="logout()">
-            <font-awesome-icon class="icon" icon="fa-right-from-bracket"/> Logout
+          <router-link to="/signup" class="nav-link">
+            <font-awesome-icon class="icon" icon="fa-arrow-right"/> Sign up
+          </router-link>
+        </div> 
+        <div class="profile-info">
+          <div class="profile" v-if="authenticated">
+            <ProfileAvatar id="profile" :username="username" size=m></ProfileAvatar> 
+            <div id="profile-name">{{ username }}</div> 
           </div>
-        </li>
-      </ul>
-      <ul class="list-unstyled" v-else-if="searchQuery">
-        <label>List:</label> 
-        <li class="nav-link" v-for="list in filteredLists" :key="list.id" @click="redirectTo(list)">
-          <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ list.name }}
-        </li>
-        <label>Task:</label> 
-        <li class="nav-link" v-for="task in filteredTasks" :key="task.id" @click="redirectToTask(task)">
-          <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ task.name }}
-        </li>
-      </ul>
-    </div>
-  </nav>
+          <form class="form-inline">
+            <input class="form-control" type="search" placeholder="Search" aria-label="Search" v-model="searchQuery">
+          </form>
+        </div>
+        <ul class="list-unstyled" v-if="!searchQuery && authenticated">
+          <li>
+            <router-link to="/" class="nav-link" @click="toggleSidebar()"> 
+              <font-awesome-icon class="icon" icon="fa-list"/> All List
+            </router-link>
+          </li>
+          <li class="nav-link" @click="showinputfield()">
+            <font-awesome-icon class="icon" icon="fa-plus"/> New List
+          </li>
+          <li class="nav-link" v-if="isDevelopment" @click="add10Lists()">
+            <font-awesome-icon class="icon" icon="fa-plus"/> Add 10 Lists
+          </li>
+          <li id="list-name" class="nav-link" :class="{ 'true': showInput }" >
+            <font-awesome-icon class="icon" icon="fa-plus"/> 
+            <input type="text" placeholder="new list" id="list-input" v-model="listname" @keyup.enter="addList()">
+          </li>
+          <li class="nav-link" v-for="list in lists" :key="list.id" @click="redirectTo(list)">
+            <font-awesome-icon class="icon" icon="fa-solid fa-star" v-if="list.name === 'Favorite'"/> 
+            <font-awesome-icon class="icon" icon="fa-solid fa-list-check" v-else/> 
+            {{ list.name }}
+          </li>
+          <li>
+            <div class="nav-link" id="logout" @click="logout()">
+              <font-awesome-icon class="icon" icon="fa-right-from-bracket"/> Logout
+            </div>
+          </li>
+        </ul>
+        <ul class="list-unstyled" v-else-if="searchQuery">
+          <label>List:</label> 
+          <li class="nav-link" v-for="list in filteredLists" :key="list.id" @click="redirectTo(list)">
+            <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ list.name }}
+          </li>
+          <label>Task:</label> 
+          <li class="nav-link" v-for="task in filteredTasks" :key="task.id" @click="redirectToTask(task)">
+            <font-awesome-icon class="icon" icon="fa-solid fa-list-check" /> {{ task.name }}
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
 </template>
 
 <script>
@@ -138,8 +142,11 @@ export default {
     },
     redirectTo(list) {
       this.toggleSidebar();
-      this.$store.commit('setCurrentListGuid', list.guid);
-      this.$router.push(`/list/${list.guid}`);
+      if(list.name === "Favorite") { this.$router.push("/favorite"); }
+      else {
+        this.$store.commit('setCurrentListGuid', list.guid);
+        this.$router.push(`/list/${list.guid}`); 
+      }
     },
     redirectToTask(task) {
       this.toggleSidebar();
@@ -171,7 +178,7 @@ export default {
         return;
       }
     },
-    async addDefaultLists() { 
+    async add10Lists() { 
       for (let i = 1; i <= 10; i++) {
         this.addList(); 
       } 
@@ -195,7 +202,7 @@ export default {
 </script>
 
 <style scoped>
-#sidebar {
+#sidebar, .wrapper {
   width: 200px;
   height: 100vh;
   background-color: white;
@@ -296,11 +303,16 @@ label {
   .sidebar-header {
     display: none;
   }
-  #sidebar {
+  #sidebar, .wrapper {
     background-color: transparent;
-    display: none;
     width: 100vw;
+  }
+  #sidebar {
+    display: none;
     z-index: 1;
+  }
+  .wrapper {
+    z-index: -1;
   }
 }
 .sidebar-header.true {

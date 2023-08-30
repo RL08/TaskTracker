@@ -68,19 +68,13 @@ namespace TaskTrackerProject.Application.Infrastructure
             await Users.AddRangeAsync(users);
             await SaveChangesAsync();
 
-            var userlist = new UserList( name: "GetStarted", user: users[0]);
-            await Lists.AddAsync(userlist);
-            await SaveChangesAsync();
-
-            var task = new ListTask( 
-                name: "Run 10km", 
-                status: Status.NotFinished, 
-                priority: Priority.Low, 
-                isfavorite: false,
-                list: userlist, 
-                date: null
-            );
-            await Tasks.AddAsync(task);
+            foreach (var user in users)
+            {
+                var userlist1 = new UserList(name: "GetStarted", user: user);
+                await Lists.AddAsync(userlist1); 
+                var userlist2 = new UserList(name: "Favorite", user: user);
+                await Lists.AddAsync(userlist2);
+            }
             await SaveChangesAsync();
         }
 

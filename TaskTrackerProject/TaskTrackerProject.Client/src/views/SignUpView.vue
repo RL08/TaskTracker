@@ -66,7 +66,8 @@ export default {
       try {
         const userdata = (await axios.post('user/register', this.loginModel)).data;
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
-        this.$store.commit('authenticate', userdata);     
+        this.$store.commit('authenticate', userdata);  
+        await this.addDefaultList();   
         this.$router.push("/");
       } catch (e) {
         if(e.response === undefined) { console.error(e); }
@@ -76,6 +77,25 @@ export default {
         else if (e.response.status == 400) {
           toast.error("User is already in the database.");
         }
+      }
+    },
+    async addDefaultList() {
+      if (this.authenticated) {
+        //ternary operator for default list
+        const newList = {
+          name: "Favorite",
+          userguid: this.$store.state.user.guid
+        };
+        try { 
+          await axios.post('list/addlist', newList); 
+        } 
+        catch (e) {
+          console.error(e)
+        }
+      } 
+      else {
+        toast.error("You are not logged in")
+        return;
       }
     },
   },
