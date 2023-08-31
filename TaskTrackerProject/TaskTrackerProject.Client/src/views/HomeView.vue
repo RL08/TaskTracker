@@ -100,11 +100,10 @@ export default {
       await axios.delete(`list/${list.guid}`, list.guid); 
     },
     redirectTo(list) {
+      this.$store.commit('setCurrentListGuid', list.guid);
       if(list.name === "Favorite") { this.$router.push("/favorite"); }
-      else {
-        this.$store.commit('setCurrentListGuid', list.guid);
-        this.$router.push(`/list/${list.guid}`); 
-      }
+      else { this.$router.push(`/list/${list.guid}`); }
+      
     },
     getListStatus(list) {
       if (list.tasks.some((task) => task.status === 1)) {

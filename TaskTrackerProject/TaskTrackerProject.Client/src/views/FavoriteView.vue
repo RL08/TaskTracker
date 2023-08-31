@@ -170,6 +170,7 @@ export default {
           // (await axios.post('task/addtask', newTask)).data will be executed
           const task = (await axios.post('task/addtask', newTask)).data; 
           this.$store.commit('addTask', task);
+          this.$store.commit("addFavTask", task);
           toast.success("New Task has been created", { autoClose: 1000});
         } 
         catch (e) {
@@ -183,7 +184,9 @@ export default {
     },
     async deleteTask(task) {
       this.$store.commit('deleteTask', task);
+      this.$store.commit("delFavTask", task);
       await axios.delete(`task/${task.guid}`, task.guid); 
+
     },
     enableEditName(task) {
       if(this.edit) {
