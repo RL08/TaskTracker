@@ -427,6 +427,7 @@ input {
 	padding: 5px 10px;
 	border: 5px solid turquoise;
 	border-radius: 6px;
+  z-index: 0;
 }
 input::placeholder {
   color: black;

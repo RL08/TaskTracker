@@ -6,7 +6,7 @@ import 'vue3-toastify/dist/index.css';
 </script>
 
 <template>
-  <div class="wrapper">
+  <div class="wrapper" :class="{ 'true': showSidebar }">
     <button class="navbar-toggler" id="first-navbar-toggler" :class="{ 'true': showNavbar }" @click="toggleSidebar()">
       <font-awesome-icon id="bar" icon="fa-bars"/>
     </button>
@@ -49,7 +49,7 @@ import 'vue3-toastify/dist/index.css';
             <input type="text" placeholder="new list" id="list-input" v-model="listname" @keyup.enter="addList()">
           </li>
           <li class="nav-link" v-for="list in lists" :key="list.id" @click="redirectTo(list)">
-            <font-awesome-icon class="icon" icon="fa-solid fa-star" v-if="list.name === 'Favorite'"/> 
+            <font-awesome-icon class="icon" icon="fa-solid fa-star" v-if="list.name === 'Important'"/> 
             <font-awesome-icon class="icon" icon="fa-solid fa-list-check" v-else/> 
             {{ list.name }}
           </li>
@@ -142,7 +142,7 @@ export default {
     },
     redirectTo(list) {
       this.toggleSidebar();
-      if(list.name === "Favorite") { this.$router.push("/favorite"); }
+      if(list.name === "Important") { this.$router.push("/important"); }
       else {
         this.$store.commit('setCurrentListGuid', list.guid);
         this.$router.push(`/list/${list.guid}`); 
@@ -309,10 +309,6 @@ label {
   }
   #sidebar {
     display: none;
-    z-index: 1;
-  }
-  .wrapper {
-    z-index: -1;
   }
 }
 .sidebar-header.true {
@@ -321,6 +317,9 @@ label {
 #sidebar.true {
   background-color: white;
   display: block;
+}
+.wrapper.true {
+  z-index: 1;
 }
 #first-navbar-toggler.true {
   display: none;

@@ -52,8 +52,8 @@ import 'vue3-toastify/dist/index.css';
               <progress :value="getCompletedTaskCount(list)" :max="list.tasks.length"> </progress> 
             </td> 
             <td data-label="Options"> 
-              <font-awesome-icon class="icon" :class="{ 'true': edit }" icon="fa-solid fa-pen" @click="enableEdit(list)"/> 
-              <font-awesome-icon class="icon" icon="fa-solid fa-trash" @click="deleteList(list)"/> 
+              <font-awesome-icon class="icon" :class="{ 'true': edit }" icon="fa-solid fa-pen" @click="enableEdit(list)" v-if="list.name !== 'Important'"/> 
+              <font-awesome-icon class="icon" icon="fa-solid fa-trash" @click="deleteList(list)" v-if="list.name !== 'Important'"/> 
             </td>
           </tr>
         </tbody>
@@ -101,33 +101,33 @@ export default {
     },
     redirectTo(list) {
       this.$store.commit('setCurrentListGuid', list.guid);
-      if(list.name === "Favorite") { this.$router.push("/favorite"); }
+      if(list.name === "Important") { this.$router.push("/important"); }
       else { this.$router.push(`/list/${list.guid}`); }
       
     },
     getListStatus(list) {
-      if (list.tasks.some((task) => task.status === 1)) {
-        return "Not Finished";
+      if (list.tasks.some((task) => task.status === 3)) {
+        return "Completed";
       } 
       else if (list.tasks.some((task) => task.status === 2)) {
         return "In Progress";
       } 
-      else if (list.tasks.some((task) => task.status === 3)) {
-        return "Completed";
-      }
+      else if (list.tasks.some((task) => task.status === 1)) {
+        return "Not Finished";
+      } 
       else {
         return "No Status";
       }
     },
     getListPriority(list) {
-      if (list.tasks.some((task) => task.priority === 1)) {
-        return "Low";
+      if (list.tasks.some((task) => task.priority === 3)) { 
+        return "High";
       }
       else if (list.tasks.some((task) => task.priority === 2)) {
         return "Medium";
       }
-      else if (list.tasks.some((task) => task.priority === 3)) { 
-        return "High";
+      else if (list.tasks.some((task) => task.priority === 1)) {
+        return "Low";
       }
       else {
         return "No Priority";

@@ -61,7 +61,8 @@ export default {
 			try {
 				const userdata = (await axios.post('user/loginspg', this.loginModel)).data;
         axios.defaults.headers.common['Authorization'] = `Bearer ${userdata.token}`;
-        this.$store.commit('authenticate', userdata);     
+        this.$store.commit('authenticate', userdata);  
+				await this.addDefaultList();      
         this.$router.push("/");
 			} catch (e) {
         if(e.response === undefined) { console.error(e); }
@@ -69,7 +70,21 @@ export default {
           toast.error("Login failed! Invalid credentials!");
         }
       }
-		}
+		},
+		async addDefaultList() {
+      //ternary operator for default list
+      const newList = {
+        name: "Important",
+        userguid: this.$store.state.user.guid
+      };
+			console.log(newList)
+      try { 
+        await axios.post('list/addlist', newList); 
+      } 
+      catch (e) {
+        console.error(e)
+      }
+    },
 	}
 }
 </script>

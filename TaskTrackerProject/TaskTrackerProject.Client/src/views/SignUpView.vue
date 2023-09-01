@@ -8,37 +8,37 @@ import SideBar from "../components/SideBar.vue"
 <template>
 <div class="wrapper">
   <SideBar/>
-  <div class="form" v-if="!authenticated">
-  <ul class="tab-group">
-    <li class="tab">
-			<router-link to="/signin" class="tab-link">
-        <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign in
-      </router-link>
-    </li>
-    <li class="tab active">
-			<router-link to="/signup" class="tab-link" >
-        <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign up
-      </router-link>
-		</li>
-  </ul>
-  <div class="form-content">
-    <div id="signup">
-      <h1>Register</h1>
-      <form @submit.prevent="register">
-        <div class="form-group">
-          <input type="text" required placeholder="Username" v-model="loginModel.username"/>
-        </div>
-        <div class="form-group">
-          <input type="email" required placeholder="Email Address" v-model="loginModel.email"/>
-        </div>
-        <div class="form-group">
-          <input type="password" required placeholder="Password" v-model="loginModel.password"/>
-        </div>
-        <button type="submit" class="button">Sign Up</button>
-      </form>
+  <div class="form">
+    <ul class="tab-group">
+      <li class="tab">
+        <router-link to="/signin" class="tab-link">
+          <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign in
+        </router-link>
+      </li>
+      <li class="tab active">
+        <router-link to="/signup" class="tab-link" >
+          <font-awesome-icon class="icon" icon="fa-arrow-left"/> Sign up
+        </router-link>
+      </li>
+    </ul>
+    <div class="form-content">
+      <div id="signup">
+        <h1>Register</h1>
+        <form @submit.prevent="register">
+          <div class="form-group">
+            <input type="text" required placeholder="Username" v-model="loginModel.username"/>
+          </div>
+          <div class="form-group">
+            <input type="email" required placeholder="Email Address" v-model="loginModel.email"/>
+          </div>
+          <div class="form-group">
+            <input type="password" required placeholder="Password" v-model="loginModel.password"/>
+          </div>
+          <button type="submit" class="button">Sign Up</button>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 </div>
 </template>
 
@@ -80,28 +80,17 @@ export default {
       }
     },
     async addDefaultList() {
-      if (this.authenticated) {
-        //ternary operator for default list
-        const newList = {
-          name: "Favorite",
-          userguid: this.$store.state.user.guid
-        };
-        try { 
-          await axios.post('list/addlist', newList); 
-        } 
-        catch (e) {
-          console.error(e)
-        }
+      const newList = {
+        name: "Important",
+        userguid: this.$store.state.user.guid
+      };
+			console.log(newList)
+      try { 
+        await axios.post('list/addlist', newList); 
       } 
-      else {
-        toast.error("You are not logged in")
-        return;
+      catch (e) {
+        console.error(e)
       }
-    },
-  },
-  computed: {
-    authenticated() {
-      return this.$store.state.user.isLoggedIn ? true : false;     
     },
   },
 };

@@ -40,7 +40,7 @@ namespace TaskTrackerProject.Webapi.Controllers
         /// <param name="credentials"></param>
         /// <returns></returns>
         [HttpPost("loginspg")]
-        public async Task<IActionResult> LoginMSAsync([FromBody] CredentialsDto credentials)
+        public async Task<IActionResult> LoginSPG([FromBody] CredentialsDto credentials)
         {
             var lifetime = TimeSpan.FromHours(3);
             var searchuser = _config["Searchuser"];

@@ -18,8 +18,8 @@ const router = createRouter({
       meta: { authorize: true },
     },
     {
-      path: '/favorite',
-      name: 'favorite',
+      path: '/important',
+      name: 'important',
       component: FavoriteView,
       meta: { authorize: true },
     },
@@ -32,17 +32,20 @@ const router = createRouter({
     {
       path: '/signin',
       name: 'signin',
-      component: SignInView
+      component: SignInView,
+      meta: { authorize: false },
     },
     {
       path: '/signup',
       name: 'signup',
-      component: SignUpView
+      component: SignUpView,
+      meta: { authorize: false },
     },
     {
       path: '/signinspg',
       name: 'signinspg',
-      component: SignInSPGView
+      component: SignInSPGView,
+      meta: { authorize: false },
     },
   ]
 })
