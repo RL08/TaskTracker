@@ -12,9 +12,9 @@ With its user-friendly interface, TaskTracker simplifies the process of managing
 4. Status Levels: Implement a status system (not finished, in progress, completed) for tasks so that users can easily identify and focus on important tasks.
 5. Search and Filtering: Provide search functionality to help users quickly find specific tasks and lists.
 6. Persist data: Tasks and lists are persisted in the database.
-7. Login with JWT: Implement a secure user authentication system that requires users to enter their unique credentials (username, password) to access the application. Upon successful login, a JSON Web Token (JWT) is generated and sent to the client. This token contains user-specific information and cannot be manipulated. It is included in future requests to verify the user's identity and grant access to protected resources.
-8. Register using Student Account: Implement a secure user authentication system that requires users to enter their student account information (username, password, email) to access the application. 
-9. Register: TaskTracker has a user registration system. New users can provide necessary details such as username, password, and email, which are securely stored in the database. 
+7. Register: TaskTracker has a user registration system. New users can provide necessary details such as username, password, and email, which are securely stored in the database. 
+8. Login with JWT: Implement a secure user authentication system that requires users to enter their unique credentials (username, password) to access the application. Upon successful login, a JSON Web Token (JWT) is generated and sent to the client. This token contains user-specific information and cannot be manipulated. It is included in future requests to verify the user's identity and grant access to protected resources.
+9. Login using Student Account: Implement a secure user authentication system that requires users to enter their student account information (username, password, email) to access the application.
 
 If you'd like to see examples of the features mentioned above, you can find them in [Example](https://github.com/RL08/TaskTracker/tree/main/Example/README.md).
 ## Getting Started
