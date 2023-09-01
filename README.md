@@ -6,7 +6,7 @@ TaskTracker is a web-based task management application designed to assist indivi
 With its user-friendly interface, TaskTracker simplifies the process of managing tasks, helping users stay organized and productive.
 
 ## Features
-1. Task creation and management: Allow users to create, edit, and delete tasks. Each task should include information such as the task name, status, priority level, and due date.
+1. Task creation and management: Allow users to create, edit, delete and mark tasks. Each task should include information such as the task name, status, priority level, and due date.
 2. Task lists: Allow users to create multiple lists to better organize their tasks, such as work, personal, shopping, and more. Each list should include information such as the list name, the lowest task status, the lowest task priority level, and the progress in terms of completed tasks.
 3. Priority Levels: Implement a priority system (low, medium, high) for tasks so users can easily identify and focus on important tasks.
 4. Status Levels: Implement a status system (not finished, in progress, completed) for tasks so that users can easily identify and focus on important tasks.
